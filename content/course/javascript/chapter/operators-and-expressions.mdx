@@ -1,0 +1,191 @@
+---
+index: 2
+title: "JavaScript Operators & Expressions"
+---
+
+Operators are the essential tools in your JavaScript toolbox. They perform calculations, comparisons, and manipulations on data, allowing you to construct meaningful expressions and control the flow of your program. In this chapter, we'll delve into the four primary categories of operators in JavaScript: arithmetic, comparison, logical, and conditional (ternary).
+
+## Arithmetic Operators
+
+Arithmetic operators perform mathematical operations on numeric values.
+
+- **Addition (`+`):** Adds two numbers.
+
+```javascript
+let sum = 5 + 3;
+console.log(sum); // Output: 8
+```
+
+- **Subtraction (`-`):** Subtracts one number from another.
+
+```javascript
+let difference = 10 - 4;
+console.log(difference); // Output: 6
+```
+
+- **Multiplication (`*`):** Multiplies two numbers.
+
+```javascript
+let product = 2 * 6;
+console.log(product); // Output: 12
+```
+
+- **Division (`/`):** Divides one number by another.
+
+```javascript
+let quotient = 8 / 2;
+console.log(quotient); // Output: 4
+```
+
+- **Modulus (`%`):** Returns the remainder of a division operation.
+
+```javascript
+let remainder = 15 % 7;
+console.log(remainder); // Output: 1
+```
+
+**Increment (`++`) and Decrement (`--`):**
+
+These operators can increment (add 1) or decrement (subtract 1) the value of a variable. They come in two forms:
+
+- **Pre-increment/decrement (`++x`, `--x`):** Increments/decrements the variable before using its new value.
+
+```javascript
+let count = 0;
+console.log(++count); // Output: 1 (count is incremented to 1 before logging)
+
+let age = 25;
+console.log(--age); // Output: 24 (age is decremented to 24 before logging)
+```
+
+- **Post-increment/decrement (`x++`, `x--`):** Increments/decrements the variable after using its current value.
+
+```javascript
+let num = 10;
+console.log(num++); // Output: 10 (num is used as 10, then incremented to 11)
+
+let score = 80;
+console.log(score--); // Output: 80 (score is used as 80, then decremented to 79)
+```
+
+**Operator Precedence:**
+
+Remember, operators have a specific order of operations (precedence) that determines how they are evaluated in an expression. For example, multiplication and division happen before addition and subtraction. Use parentheses to control the order if needed.
+
+```javascript
+let result = 6 * 2 + 3; // Evaluates to 15 (multiplication happens first)
+let complex = (5 + 2) * 3; // Evaluates to 21 (parentheses enforce order)
+```
+
+## Comparison Operators
+
+Comparison operators compare the values of two operands and return a boolean (true or false) result.
+
+- **Equal (`==`):** Checks if two operands have the same value.
+
+```javascript
+let x = 10;
+console.log(x == 10); // Output: true
+console.log(x == "10"); // Output: true (loose comparison, converts string to number)
+```
+
+- **Not equal (`!=`):** Checks if two operands are not equal.
+
+```javascript
+let y = 5;
+console.log(y != 7); // Output: true
+console.log(y != "5"); // Output: false (loose comparison)
+```
+
+- **Strict equal (`===`):** Compares both the value and type of two operands.
+
+```javascript
+let name = "Alice";
+console.log(name === "Alice"); // Output: true (both value and type match)
+console.log(name === "alice"); // Output: false (different case)
+```
+
+- **Strict not equal (`!==`):** Checks if both value and type are not equal.
+
+```javascript
+let num = 20;
+console.log(num !== 20.0); // Output: false (value is the same, type conversion)
+console.log(num !== "20"); // Output: true (different type)
+```
+
+- **Greater than (`>`); Less than (`<`); Greater than or equal to (`>=`); Less than or equal to (`<=`):**
+
+These operators compare the values of two operands numerically.
+
+```javascript
+let age = 30;
+console.log(age > 25); // Output: true
+console.log(age < 40); // Output: true
+console.log(age >= 30); // Output: true
+console.log(age <= 20); // Output: false
+```
+
+## Logical Operators
+
+Logical operators combine boolean expressions to form a single boolean result.
+
+- **AND (`&&`):** Returns true only if both operands are true.
+
+```javascript
+let isLoggedIn = true;
+let hasPermission = true;
+console.log(isLoggedIn && hasPermission); // Output: true (both conditions true)
+```
+
+- **OR (`||`):** Returns true if at least one operand is true.
+
+```javascript
+let isWeekend = true;
+let isOnHoliday = false;
+console.log(isWeekend || isOnHoliday); // Output: true (one condition true)
+```
+
+- **NOT (`!`):** Negates the truth value of an operand.
+
+```javascript
+let isValid = false;
+console.log(!isValid); // Output: true (negates false to true)
+```
+
+**Short-circuit Evaluation:**
+
+Logical operators use short-circuit evaluation, meaning they stop evaluating operands as soon as the final result can be determined. This can improve performance in certain situations.
+
+```javascript
+let user = { isLoggedIn: true, isAdmin: false };
+console.log(user.isLoggedIn && user.isAdmin); // Output: false (stops after finding isLoggedIn is false)
+```
+
+## Conditional (Ternary) Operator
+
+The conditional (ternary) operator provides a concise way to write an if-else statement in a single expression.
+
+```javascript
+let age = 18;
+let isAdult = age >= 18 ? "Adult" : "Minor";
+console.log(isAdult); // Output: "Adult"
+
+let message = age >= 18 ? "You can vote." : "You cannot vote.";
+console.log(message); // Output: "You can vote."
+```
+
+The ternary operator takes the following format:
+
+```
+condition ? expression_if_true : expression_if_false
+```
+
+It evaluates the `condition` and returns the `expression_if_true` if the condition is true, otherwise, it returns the `expression_if_false`.
+
+**Practice Exercises:**
+
+1. Write expressions to calculate the area (length _ width) and perimeter (2 _ (length + width)) of a rectangle, given its length and width as variables.
+2. Write code that checks if a user is eligible to vote (age >= 18) and displays a corresponding message.
+3. Use the ternary operator to assign a discount based on the age of a customer (e.g., 10% discount for seniors above 65).
+
+By understanding and applying operators effectively, you'll be able to write clear, concise, and efficient JavaScript code, making your program logic more readable and maintainable.

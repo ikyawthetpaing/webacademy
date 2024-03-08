@@ -1,0 +1,101 @@
+---
+index: 1
+title: "Node.js Basics"
+---
+
+In the previous chapter, we explored the exciting world of Node.js and its potential. Now, let's dive into the core concepts that lay the foundation for building powerful server-side applications. Buckle up as we embark on a journey exploring the basics of Node.js!
+
+## 1. Hello World with Node.js: A Warm Welcome
+
+We begin with a classic tradition, the quintessential "Hello World" program. This simple example serves as a stepping stone to understanding how Node.js executes code.
+
+```javascript
+console.log("Hello, World!");
+```
+
+1. **Create a file:** Save the code above in a file named `hello.js`.
+2. **Run the script:** Open a terminal, navigate to the directory containing `hello.js`, and execute the following command:
+
+```bash
+node hello.js
+```
+
+You should see the message "Hello, World!" printed in your terminal, signifying the successful execution of your first Node.js script.
+
+**Explanation:**
+
+- The `console.log()` function is used to print a message to the console.
+- When you run `node hello.js`, the Node.js runtime reads the code in `hello.js`, executes it line by line, and prints the output to the terminal.
+
+## 2. Understanding the Event-Driven Architecture: A Core Strength
+
+Node.js operates on an **event-driven, non-blocking I/O model**. This means it handles tasks asynchronously, meaning it doesn't wait for one task to complete before starting another. Instead, it registers callbacks (functions) to be executed when certain events occur.
+
+**Key Points:**
+
+- **Non-blocking:** Node.js doesn't block the execution flow for long-running operations like reading or writing files. It moves on to other tasks while waiting for the operation to complete.
+- **Event loop:** This mechanism is responsible for monitoring events and executing the corresponding callbacks.
+- **Efficiency:** This architecture allows Node.js to handle multiple concurrent requests efficiently, making it ideal for building scalable and responsive applications.
+
+**Example:**
+
+```javascript
+console.log("Before setTimeout");
+
+setTimeout(() => {
+  console.log("Inside setTimeout");
+}, 2000);
+
+console.log("After setTimeout");
+```
+
+**Explanation:**
+
+1. The code first logs "Before setTimeout".
+2. It uses `setTimeout` to schedule a function to be executed after 2 seconds (2000 milliseconds).
+3. The code then logs "After setTimeout".
+
+Even though the `setTimeout` function schedules a task to be executed after 2 seconds, the code continues to the next line, logging "After setTimeout" immediately. The event loop will keep track of the scheduled function and execute it after the 2-second delay.
+
+## 3. Working with the Node.js REPL (Read-Eval-Print Loop): Your Interactive Playground
+
+The **Node.js REPL** (Read-Eval-Print Loop) is a built-in interactive tool that allows you to experiment with JavaScript code directly in the terminal. It's a fantastic way to learn, test code snippets, and explore the Node.js environment.
+
+**Accessing the REPL:**
+
+Open your terminal and type:
+
+```bash
+node
+```
+
+You'll be greeted by the `>` prompt, signifying you've entered the REPL.
+
+**Experimenting in the REPL:**
+
+1. Type any valid JavaScript expression or statement and press Enter. The REPL will evaluate the code and print the result.
+
+```
+> 2 + 2;
+4
+```
+
+2. You can also define variables and use them:
+
+```
+> let name = "Alice";
+> console.log(name);
+Alice
+```
+
+3. To exit the REPL, type `Ctrl+C` or `exit`.
+
+**Benefits of the REPL:**
+
+- **Interactive testing:** Try out code snippets and see the results instantly.
+- **Learning platform:** Experiment with different concepts and deepen your understanding.
+- **Debugging:** Use the REPL to test and troubleshoot smaller code segments.
+
+## Conclusion
+
+By understanding these fundamental concepts, you've laid the groundwork for building robust and efficient server-side applications with Node.js. Remember, practice and experimentation are key to mastering these principles. Explore the REPL, create more complex scripts, and gradually build your confidence in the Node.js world!

@@ -1,0 +1,137 @@
+---
+index: 3
+title: "JavaScript Control Flow"
+---
+
+Control flow dictates the order in which statements are executed within your JavaScript program. In this chapter, we'll delve into the essential control flow constructs: conditional statements (`if`, `else if`, `else`), the `switch` statement, and various looping mechanisms (`for`, `while`, and `do-while`). These tools allow you to make decisions, repeat code blocks, and create dynamic program behavior.
+
+## Conditional Statements
+
+Conditional statements enable your program to make decisions based on specific conditions.
+
+**1. `if` Statement:**
+
+The `if` statement executes a code block only if the specified condition evaluates to true.
+
+```javascript
+let age = 25;
+
+if (age >= 18) {
+  console.log("You are eligible to vote.");
+} else {
+  console.log("You are not eligible to vote.");
+}
+```
+
+**2. `else if` Statement:**
+
+The `else if` statement provides additional conditional checks after an initial `if` statement doesn't evaluate to true. You can chain multiple `else if` statements.
+
+```javascript
+let grade = 85;
+
+if (grade >= 90) {
+  console.log("Excellent!");
+} else if (grade >= 80) {
+  console.log("Very good!");
+} else if (grade >= 70) {
+  console.log("Good.");
+} else {
+  console.log("Needs improvement.");
+}
+```
+
+**3. `else` Statement:**
+
+The `else` statement is an optional block that executes if none of the preceding conditions in `if` or `else if` statements are met.
+
+```javascript
+let isLoggedIn = false;
+
+if (isLoggedIn) {
+  console.log("Welcome back!");
+} else {
+  console.log("Please log in.");
+}
+```
+
+## Switch Statement
+
+The `switch` statement provides a multi-way branching mechanism based on the value of an expression. It can be a more concise alternative to multiple `if` statements for handling several distinct cases.
+
+```javascript
+let day = "Tuesday";
+
+switch (day) {
+  case "Monday":
+  case "Tuesday":
+  case "Wednesday":
+  case "Thursday":
+  case "Friday":
+    console.log("It's a weekday.");
+    break; // Exit the switch statement after matching a case
+  case "Saturday":
+  case "Sunday":
+    console.log("It's a weekend.");
+    break;
+  default:
+    console.log("Invalid day of the week."); // Default case for non-matching values
+}
+```
+
+## Loops
+
+Loops allow you to execute a block of code repeatedly until a certain condition is met.
+
+**1. `for` Loop:**
+
+The `for` loop iterates a specific number of times based on a counter variable.
+
+```javascript
+for (let i = 1; i <= 5; i++) {
+  console.log("Iteration:", i);
+}
+```
+
+**2. `while` Loop:**
+
+The `while` loop continues executing a code block as long as a specified condition remains true.
+
+```javascript
+let count = 0;
+
+while (count < 3) {
+  console.log("Count:", count);
+  count++; // Update the counter to eventually exit the loop
+}
+```
+
+**3. `do-while` Loop:**
+
+The `do-while` loop guarantees at least one execution of the code block before checking the condition.
+
+```javascript
+let input = "";
+
+do {
+  input = prompt("Enter your name (or 'quit' to exit):");
+  if (input !== "quit") {
+    console.log("Hello,", input);
+  }
+} while (input !== "quit");
+```
+
+**Key Points:**
+
+- Use conditional statements (`if`, `else if`, `else`) to make decisions based on conditions.
+- The `switch` statement is useful for handling multiple distinct cases efficiently.
+- Loops (`for`, `while`, `do-while`) allow you to repeat code execution based on specific criteria.
+- Choose the appropriate control flow structure based on your program's logic and the desired behavior.
+
+**Practice Exercises:**
+
+1. Write a program that prompts the user for a number and checks if it's even (using the modulo operator).
+2. Create a `for` loop that iterates through an array of fruits and prints their names to the console.
+3. Implement a `do-while` loop that keeps asking the user for input until they enter a valid password (meeting certain criteria like length).
+
+By mastering control flow concepts, you'll gain the ability to structure your JavaScript code effectively, making

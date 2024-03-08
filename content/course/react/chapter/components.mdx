@@ -1,0 +1,112 @@
+---
+index: 2
+title: "React Components"
+---
+
+React applications are built upon **components**, reusable pieces of code that encapsulate both functionality and UI (User Interface) representation. Just like building blocks in construction, components enable developers to create complex applications by assembling smaller, self-contained units.
+
+## 1. What are Components?
+
+Components offer several key advantages:
+
+- **Reusability:** A component can be used and reused across different parts of your application, promoting code efficiency and reducing redundancy.
+- **Maintainability:** Complex UIs are easier to manage and maintain by breaking them down into smaller, well-defined components.
+- **Encapsulation:** Components encapsulate their own logic and data, improving code organization and reducing the risk of unintended side effects.
+
+**Types of Components:**
+
+React offers two primary types of components:
+
+- **Functional Components:** These are simpler components defined as JavaScript functions that return JSX (JavaScript XML) to describe the UI.
+- **Class Components:** These are defined using the `React.Component` class and provide more flexibility for complex components with lifecycle methods and state management.
+
+## 2. Functional Components (Recommended for beginners)
+
+Functional components are often the preferred choice for beginners and simple components due to their ease of use and concise syntax:
+
+```javascript
+function Greeting(props) {
+  return <h1>Hello, {props.name}!</h1>;
+}
+
+const name = "Alice";
+const element = <Greeting name={name} />;
+```
+
+This code defines a functional component named `Greeting` that takes a `name` prop. It returns JSX to display a heading with the provided name.
+
+## 3. Class Components (Optional - Focus on Functional Components initially)
+
+While functional components are often preferred for their simplicity, class components offer additional capabilities for complex components with state management and lifecycle methods:
+
+```javascript
+class Counter extends React.Component {
+  constructor(props) {
+    super(props); // Call the parent constructor
+    this.state = { count: 0 }; // Define initial state
+  }
+
+  handleClick = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+  render() {
+    return (
+      <div>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.handleClick}>Increment</button>
+      </div>
+    );
+  }
+}
+```
+
+This code defines a class component named `Counter` that manages an internal state variable (`count`). It includes methods like `constructor` for setting up initial state, `handleClick` for handling button clicks, and `render` for defining the UI.
+
+**Choosing between Functional and Class Components:**
+
+- **Functional components:**
+  - Simpler syntax
+  - Ideal for simple, stateless components
+  - Recommended for beginners
+- **Class components:**
+  - More flexibility with state management and lifecycle methods
+  - Required for complex components with state and side effects
+
+**Remember:** Start with functional components for most cases. As you gain experience and encounter the need for more complex features, explore class components for state management and lifecycle methods.
+
+## 4. Creating and Rendering Components
+
+**Creating Components:**
+
+- Define functional components as JavaScript functions that return JSX.
+- Define class components by extending the `React.Component` class and implementing required methods like `constructor`, `render`, and optional lifecycle methods.
+
+**Rendering Components:**
+
+- Use JSX to create React elements representing your components and pass props as needed.
+- Use `ReactDOM.render` to render the created element into a DOM element in your HTML document.
+
+**Example:**
+
+```jsx
+// App component (Functional)
+function App() {
+  return (
+    <div>
+      <h1>Welcome to React!</h1>
+      <Greeting name="Bob" />
+      <Counter />
+    </div>
+  );
+}
+
+// Render App component
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+This example demonstrates both functional and class components being used within the `App` component. The `App` component renders a heading, a `Greeting` component with a prop, and a `Counter` component.
+
+## Conclusion:
+
+Components are the fundamental building blocks of React applications, enabling you to create modular, reusable, and maintainable UIs. By understanding the concepts of functional and class components, creating and rendering them effectively, you'll be well on your way to building interactive and engaging user interfaces with React.

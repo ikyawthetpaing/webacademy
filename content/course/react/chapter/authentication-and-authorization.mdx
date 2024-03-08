@@ -1,0 +1,203 @@
+---
+index: 13
+title: "React Authentication & Authorization"
+---
+
+In interactive applications, managing user access and ensuring data security is crucial. This chapter delves into implementing user authentication with JSON Web Tokens (JWT), enforcing role-based access control (RBAC), and securing routes in React applications.
+
+## 1. Implementing User Authentication with JWT:
+
+**Concept:**
+
+JSON Web Tokens (JWT) are a popular mechanism for securely transmitting user information between the client-side (React application) and the server-side (backend API). They offer several advantages:
+
+- **Self-contained:** Information is encoded within the token, reducing the need to store user data on the client-side.
+- **Stateless:** Servers are not required to maintain session state, potentially improving scalability.
+- **Secure:** JWTs can be signed and verified using cryptographic algorithms, ensuring data integrity and preventing tampering.
+
+**Example (simplified):**
+
+**1.1 Server-side (Backend API):**
+
+```javascript
+// Assuming backend uses Node.js and Express
+
+const jwt = require("jsonwebtoken");
+
+// ... user authentication logic (e.g., username/password verification)
+
+const secret = "your_secret_key"; // Replace with a strong, unique secret
+
+const generateToken = (user) => {
+  const payload = {
+    userId: user.id,
+    username: user.username,
+    roles: user.roles, // Add user roles for RBAC
+  };
+  return jwt.sign(payload, secret, { expiresIn: "1h" }); // Set appropriate expiration time
+};
+
+// ... endpoint for login or user creation, returning the generated JWT
+```
+
+**1.2 Client-side (React application):**
+
+```jsx
+import axios from "axios";
+
+const login = async (username, password) => {
+  // ... send login request to server-side API endpoint
+  const response = await axios.post("/api/login", { username, password });
+
+  if (response.data.token) {
+    localStorage.setItem("token", response.data.token); // Store token in local storage (consider alternatives like cookies)
+  } else {
+    // Handle login failure
+  }
+};
+
+const getUserData = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return null; // Handle missing token
+  }
+
+  try {
+    const response = await axios.get("/api/me", {
+      headers: { Authorization: `Bearer ${token}` }, // Include token in request header
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error); // Handle error (e.g., token expired, invalid token)
+    localStorage.removeItem("token"); // Consider removing token on errors
+  }
+};
+
+// ... use getUserData to access user information or conditionally render protected content
+```
+
+**Explanation:**
+
+1. The backend generates a JWT upon successful user authentication, containing user information and setting an expiration time.
+2. The client stores the JWT in local storage (or other secure storage mechanisms).
+3. Subsequent API requests from the client include the JWT in an `Authorization` header (`Bearer ${token}`).
+4. The server verifies the JWT signature and retrieves user information from the payload for authorization decisions.
+
+**Remember:**
+
+- **Secure JWT storage:** Use secure storage mechanisms (e.g., HttpOnly cookies) to prevent client-side script access.
+- **Expiration and refresh tokens:** Implement mechanisms for token expiration and refresh to maintain security and avoid token invalidation.
+
+## 2. Role-Based Access Control (RBAC):
+
+**Concept:**
+
+RBAC allows controlling user access to resources and functionalities based on assigned roles. This enhances security by granting permissions or restricting access based on user roles, rather than individual users.
+
+**Integration with JWT:**
+
+- Extend the JWT payload to include user roles alongside other user information.
+- On the server-side, check user roles within the JWT payload before granting access to resources or functionalities.
+
+**Example (server-side extension):**
+
+```javascript
+const authorize = (roles, action) => {
+  // Define permitted roles for each action
+  const permissions = {
+    'read-users': ['admin'],
+    'create-post': ['admin', 'editor'],
+  };
+
+  return roles.some((role) => permissions[action].includes(role));
+};
+
+// ... in protected route handler
+
+const user = jwt.verify(token, secret);
+if (!authorize(user.roles, 'read-users')) {
+  return res.status(403).json({ message: 'Unauthorized' }); // Return appropriate error response
+}
+
+// ... proceed with authorized action
+```
+
+This example demonstrates checking user roles against permitted roles
+
+## 3. Securing Routes in React Applications:
+
+**Concept:**
+
+Securing routes in React applications ensures that only authorized users can access specific pages or functionalities. This involves:
+
+- Defining protected routes: Identify routes requiring authentication and/or specific roles.
+- Implementing a protection mechanism: Utilize a library or custom logic to check user authentication and authorization based on JWT and RBAC principles.
+- Redirecting unauthorized users: When access attempts violate access control rules, redirect users to appropriate pages, such as login or error pages.
+
+**Example (using React Router and a custom `withAuth` HOC):**
+
+```jsx
+// withAuth.js (Higher-Order Component)
+
+import React from 'react';
+import { Redirect, Route } from 'react-router-dom';
+
+const withAuth = (WrappedComponent, roles) => {
+  return (props) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return <Redirect to='/login' />; // Redirect to login if not authenticated
+    }
+
+    const user = jwt.verify(token, 'your_secret_key'); // Replace with your secret
+
+    if (!roles || roles.length === 0 || roles.some((role) => user.roles.includes(role))) {
+      return <WrappedComponent {...props} user={user} />; // Pass user data if authorized
+    }
+
+    return <Redirect to='/unauthorized' /> // Redirect to unauthorized page if roles don't match
+  };
+};
+
+// App.js
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
+import Profile from './components/Profile';
+import Login from './components/Login';
+import Unauthorized from './components/Unauthorized';
+
+const withAdminAuth = withAuth(Profile, ['admin']); // Only admins can access profile
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/profile' element={<withAdminAuth />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/unauthorized' element={<Unauthorized />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
+```
+
+**Explanation:**
+
+1. The `withAuth` HOC wraps components, checking user authentication and roles against provided arguments.
+2. It redirects users based on authentication status and role verification using JWT data.
+3. In `App.js`, only the `Profile` route is wrapped with `withAdminAuth`, requiring admin roles.
+4. Unauthorized users attempting to access `Profile` are redirected to the `/unauthorized` route.
+
+**Alternatives:**
+
+- **React Router's `useAuth` hook:** Consider using React Router's `useAuth` hook once authentication context is established, providing a more central approach to managing authentication state and access control.
+- **Third-party libraries:** Explore libraries like `react-router-protected` or `redux-auth` for more features and abstractions around securing routes in React applications.
+
+## Conclusion:
+
+Implementing user authentication with JWT, enforcing RBAC, and securing routes are crucial practices for safeguarding data and user access in React applications. By combining these techniques and choosing the approach that best suits your project requirements, you can ensure robust authorization and protect sensitive information within your applications.

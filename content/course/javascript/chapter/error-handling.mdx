@@ -1,0 +1,165 @@
+---
+index: 7
+title: "JavaScript Error Handling"
+---
+
+Errors are inevitable in any programming language, and JavaScript is no exception. Fortunately, JavaScript provides robust error handling mechanisms to manage unexpected situations and prevent your application from crashing. This chapter dives into essential techniques for handling errors, including `try-catch` blocks, throwing and catching errors, and handling asynchronous errors.
+
+## Try-Catch Blocks
+
+The `try-catch` block is the fundamental construct for handling errors in JavaScript.
+
+**1. Syntax:**
+
+```javascript
+try {
+  // Code that might throw an error
+} catch (error) {
+  // Code to handle the error
+}
+```
+
+- The `try` block contains the code that might potentially throw an error.
+- The `catch` block is executed if an error occurs within the `try` block. The caught error is accessible as a variable named `error` within the `catch` block.
+
+**2. Example:**
+
+```javascript
+function divide(x, y) {
+  try {
+    return x / y;
+  } catch (error) {
+    if (error.name === "TypeError") {
+      console.error("Division by zero is not allowed.");
+    } else {
+      console.error("An unexpected error occurred:", error.message);
+    }
+    return null; // Return a default value or handle the error appropriately
+  }
+}
+
+let result = divide(10, 0);
+console.log(result); // Output: "Division by zero is not allowed."
+
+result = divide(10, 2);
+console.log(result); // Output: 5
+```
+
+**3. `finally` Block (Optional):**
+
+The `finally` block (optional) executes regardless of whether an error occurs or not. This is useful for cleanup tasks, such as closing connections or releasing resources.
+
+```javascript
+try {
+  // Code
+} catch (error) {
+  // Handle error
+} finally {
+  // Cleanup code (always executes)
+}
+```
+
+## Throwing and Catching Errors
+
+**1. `throw` Statement:**
+
+The `throw` statement is used to explicitly create and throw an error object.
+
+```javascript
+function validateAge(age) {
+  if (age < 18) {
+    throw new Error("You must be 18 or older to proceed.");
+  }
+}
+
+try {
+  validateAge(15);
+} catch (error) {
+  console.error(error.message); // Output: "You must be 18 or older to proceed."
+}
+```
+
+In this example, the `validateAge` function throws an error if the provided age is less than 18. The `try-catch` block in the main code attempts to call the function and catches the thrown error for handling.
+
+**2. Custom Errors:**
+
+You can create custom error objects using the `Error` constructor or by extending it.
+
+```javascript
+class AgeValidationError extends Error {
+  constructor(message) {
+    super(message); // Call the parent constructor
+    this.name = "AgeValidationError";
+  }
+}
+
+function validateAge(age) {
+  if (age < 18) {
+    throw new AgeValidationError("You must be 18 or older to proceed.");
+  }
+}
+
+try {
+  validateAge(15);
+} catch (error) {
+  if (error instanceof AgeValidationError) {
+    console.error(error.message); // Output: "You must be 18 or older to proceed."
+  } else {
+    console.error("An unexpected error occurred:", error.message);
+  }
+}
+```
+
+In this example, we define a custom `AgeValidationError` class extending the built-in `Error` class. This allows for more specific error handling based on the error type.
+
+## Handling Asynchronous Errors
+
+When working with asynchronous operations (e.g., fetching data from external APIs using `fetch`), you need to handle potential errors differently.
+
+**1. Promises:**
+
+When using `Promise` objects, you can utilize the `.then()` and `.catch()` methods to handle successful outcomes and errors, respectively.
+
+```javascript
+fetch("https://api.example.com/data")
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("Error fetching data:", error));
+```
+
+**2. Async/Await:**
+
+With `async/await`, you can use a `try-catch` block within an `async` function to handle errors in an asynchronous manner.
+
+```javascript
+async function fetchData() {
+  try {
+    const response = await fetch("https://api.example.com/data");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+  }
+}
+
+fetchData();
+```
+
+This example demonstrates handling potential errors within an `async` function using `try-catch`. It checks for successful response status before processing the data and throws an error if the response status code indicates an issue.
+
+**Key Points:**
+
+- `try-catch` blocks are essential for error handling in JavaScript.
+- Throwing and catching errors enable you to manage specific error situations.
+- Asynchronous operations require different approaches to handling errors, such as using `.catch()` with promises or `try-catch` within `async` functions.
+
+**Practice Exercises:**
+
+1. Create a function that reads a file from disk and handles potential errors like the file not existing or permission issues.
+2. Implement a function that parses JSON data and gracefully handles invalid JSON format or missing keys.
+3. Write an asynchronous function that fetches data from an API and displays it on a web page, handling potential network errors and parsing the response data.
+
+By understanding and applying error handling techniques, you'll be able to write robust and reliable JavaScript applications that can handle unexpected situations gracefully.

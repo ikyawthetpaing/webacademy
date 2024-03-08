@@ -1,0 +1,123 @@
+---
+index: 3
+title: "HTML Links and Images"
+---
+
+In this chapter, we'll dive into the world of **hyperlinks** and **images**, two fundamental elements that bring your web pages to life. We'll explore how to create links, connect them to different destinations, and insert captivating images to enhance your website's visual appeal.
+
+By the end of this chapter, you'll be able to:
+
+- **Create hyperlinks** that connect your web page to other websites or internal pages.
+- **Specify attributes** for links and images to control their appearance and behavior.
+- **Insert images** and optimize them for web display.
+
+## Creating Hyperlinks (Anchor Tags)
+
+Hyperlinks, often called **links** for short, are the clickable elements that transport users to different pages or sections within your website, or even external websites. They are created using the `<a>` tag, also known as the **anchor tag**.
+
+**Basic Syntax:**
+
+```html
+<a href="URL">Link Text</a>
+```
+
+- **href**: This attribute specifies the destination of the link. You can link to:
+  - **External websites:** Use the full URL, e.g., `href="https://www.example.com"`
+  - **Internal pages within your website:** Use relative paths, e.g., `href="about.html"`
+  - **Specific sections within the same page:** Use the `id` attribute of the target element, e.g., `href="#footer"`
+- **Link Text**: This is the visible text that users will click on. Make it descriptive and relevant to the destination.
+
+**Example:**
+
+```html
+<p>
+  Click here to visit the
+  <a href="https://www.example.com">Example website</a>.
+</p>
+```
+
+## Linking to External Websites
+
+Linking to external websites is a great way to provide additional resources and information for your users. Remember to always open external links in a new tab or window using the `target="_blank"` attribute:
+
+```html
+<a href="https://www.example.com" target="_blank"
+  >Learn more about this topic</a
+>
+```
+
+## Linking to Other Pages within the Same Website
+
+To connect different pages within your website, use relative paths in the `href` attribute. Assume your current page is "index.html" and you want to link to the "about.html" page:
+
+```html
+<a href="about.html">Read about our company</a>
+```
+
+## Linking to Specific Sections on a Page
+
+If your page has a long content area, you can create internal links to specific sections using the `id` attribute of the target element:
+
+```html
+<h2 id="services">Our Services</h2>
+<p>...content about services...</p>
+<a href="#services">Jump to services section</a>
+```
+
+## Additional Attributes for Links:
+
+- `target`: This attribute specifies where the linked page should open. By default, it opens in the same window (\_self). You can use \_blank to open it in a new tab.
+- `title`: This attribute provides a tooltip that appears when hovering over the link with the mouse.
+
+Example:
+
+```html
+<a href="contact.html" target="_blank" title="Contact us via email"
+  >Contact Us</a
+>
+```
+
+## Inserting Images (img Tag) and Specifying Attributes
+
+Images add visual interest and clarity to your web pages. You insert images using the `<img>` tag.
+
+**Basic Syntax:**
+
+```html
+<img src="image.jpg" alt="Image Description" width="150" height="100" />
+```
+
+- **src**: This attribute specifies the path to your image file.
+- **alt**: The `alt` attribute is crucial for accessibility and SEO. It provides a text description of the image for users who cannot see it or for search engines.
+- **width & height**: These attributes set the dimensions of the image in pixels. You can also use percentages for responsive design.
+
+**Additional Attributes:**
+
+- **border**: Add a border around the image.
+- **style**: Apply inline CSS styles to the image.
+- **title**: Provide a tooltip text that appears when users hover over the image (optional).
+
+**Optimizing Images for Web:**
+
+- Use appropriate file formats like JPEG for photos and PNG for graphics.
+- Compress images to reduce file size without sacrificing quality.
+- Use descriptive filenames and alt text for SEO and accessibility.
+
+**Example:**
+
+```html
+<img src="banner.jpg" alt="Company logo" width="200" />
+```
+
+## Practice Time!
+
+Now it's your turn to experiment! Create a simple HTML page and try out the following:
+
+1. Create a link to your favorite website.
+2. Link to another page within your website (if you have one).
+3. Create a link to a specific section on your page using an `id` attribute.
+4. Insert an image and set its attributes, including `alt` text and dimensions.
+
+Remember, practice is key to mastering these concepts!
+
+I hope this chapter provides you with a solid understanding of links and images in HTML. Feel free to explore the W3Schools website and other resources for further learning and experimentation!

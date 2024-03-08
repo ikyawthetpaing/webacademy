@@ -1,0 +1,129 @@
+---
+index: 3
+title: "Node.js Filesystem"
+---
+
+Node.js empowers you to interact with the file system, enabling your applications to read, write, and manipulate files on your server. This chapter dives into the **fs** (file system) module, exploring asynchronous file operations and understanding streams, crucial for handling large files efficiently.
+
+## 1. The `fs` Module: Your Gateway to the Filesystem
+
+The `fs` module provides various methods for interacting with the file system. However, a crucial aspect of Node.js is its **non-blocking** nature. This means that file system operations are typically performed asynchronously to avoid blocking the main thread and ensure responsiveness.
+
+**Common Asynchronous Methods:**
+
+- **`fs.readFile(path, options, callback)`:** Reads the contents of a file asynchronously and invokes the provided callback function with the data (as a buffer or string) and any errors encountered.
+- **`fs.writeFile(path, data, options, callback)`:** Writes data to a file asynchronously and invokes the callback function upon completion or in case of errors.
+
+## 2. Reading Files Asynchronously: Accessing Content On-Demand
+
+Let's create a file named `data.txt` with some content:
+
+```
+Hello, Node.js file system!
+```
+
+Here's how to read its contents asynchronously using `fs.readFile`:
+
+```javascript
+const fs = require("fs");
+
+fs.readFile("data.txt", "utf-8", (err, data) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(data);
+  }
+});
+```
+
+**Explanation:**
+
+1. We require the `fs` module.
+2. We call `fs.readFile` with three arguments:
+   - **`path`:** The path to the file ('data.txt' in this case).
+   - **`options`:** An optional object specifying encoding ('utf-8' for strings, defaults to buffer).
+   - **`callback`:** A function to be called when the operation completes.
+3. The callback function receives two arguments:
+   - **`err`:** An error object if an error occurred during the operation, otherwise `null`.
+   - **`data`:** The contents of the file as a string (based on the specified encoding) if successful.
+
+**Error Handling:**
+
+The callback function checks for potential errors using the `err` argument and logs them if present. Otherwise, it logs the successful reading of the data.
+
+## 3. Writing Files Asynchronously: Creating and Modifying Content
+
+Now, let's write some content to a file named `message.txt`:
+
+```javascript
+const fs = require("fs");
+
+const message = "This is a message written asynchronously.";
+
+fs.writeFile("message.txt", message, (err) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log("File written successfully!");
+  }
+});
+```
+
+**Explanation:**
+
+1. We define the message to be written to the file.
+2. We call `fs.writeFile` with three arguments:
+   - **`path`:** The path to the file ('message.txt').
+   - **`data`:** The data to be written (the message string).
+   - **`callback`:** A function to be called upon completion or error.
+
+## 4. Streams: Handling Large Files Efficiently
+
+While reading and writing files using `fs.readFile` and `fs.writeFile` are convenient, they can be inefficient for large files. This is because they load the entire file content into memory at once, which can lead to performance issues.
+
+**Introducing Streams:**
+
+Streams provide a more efficient way to handle large files by reading or writing data in chunks. This approach reduces memory usage and improves performance, especially when dealing with hefty files.
+
+**Common Stream Types:**
+
+- **Readable Stream:** Emits data chunks sequentially for reading.
+- **Writable Stream:** Accepts data chunks for writing.
+
+**Using Streams for Reading:**
+
+Here's an example of reading a large file using a readable stream:
+
+```javascript
+const fs = require("fs");
+
+const readStream = fs.createReadStream("large_file.txt");
+
+readStream.on("data", (chunk) => {
+  console.log(chunk.toString()); // Process the data chunk
+});
+
+readStream.on("error", (err) => {
+  console.error(err);
+});
+
+readStream.on("end", () => {
+  console.log("Finished reading the file.");
+});
+```
+
+**Explanation:**
+
+1. We use `fs.createReadStream` to create a readable stream for the file 'large_file.txt'.
+2. We listen for various events on the stream:
+   - **`data`:** Emitted for each chunk of data read. The callback function receives the chunk as a Buffer. We convert it to a string for logging.
+   - **`error`:** Emitted if an error occurs during reading.
+   - **`end`:** Emitted when the entire file has been read.
+
+**Using Streams for Writing:**
+
+Similarly, you can use `fs.createWriteStream` to create a writable stream for writing data to a file in chunks.
+
+## Conclusion
+
+By understanding asynchronous file operations, the `fs` module, and the concept of streams, you're equipped to effectively interact with the file system in your Node.js applications. Remember, choose the appropriate approach based on your file size and performance requirements. Explore further by experimenting with different file operations and delve deeper into error handling and advanced stream management techniques.

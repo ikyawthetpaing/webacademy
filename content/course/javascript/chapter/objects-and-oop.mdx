@@ -1,0 +1,224 @@
+---
+index: 6
+title: "JavaScript Objects & Object-oriented Programming"
+---
+
+Objects in JavaScript are fundamental data structures that store key-value pairs. These key-value pairs represent properties (keys) and their corresponding values, providing a flexible way to model real-world entities and their attributes. This chapter delves into object creation, manipulation, core OOP concepts in JavaScript, and ES6 classes.
+
+## Object Creation and Manipulation
+
+**1. Object Literal:**
+
+The most common way to create an object is using the object literal syntax, enclosing key-value pairs within curly braces `{}`.
+
+```javascript
+let person = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 30,
+  occupation: "Software Engineer",
+};
+
+console.log(person.firstName); // Output: "John"
+console.log(person["age"]); // Accessing a property using bracket notation (useful for dynamic property names)
+```
+
+**2. Object Constructor:**
+
+You can define a reusable object constructor function to create multiple objects with similar properties and methods.
+
+```javascript
+function User(firstName, lastName, age) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+
+  this.getFullName = function () {
+    return this.firstName + " " + this.lastName;
+  };
+}
+
+let user1 = new User("Alice", "Smith", 25);
+let user2 = new User("Bob", "Johnson", 40);
+
+console.log(user1.getFullName()); // Output: "Alice Smith"
+console.log(user2.age); // Output: 40
+```
+
+**3. Object Methods:**
+
+Methods are functions associated with an object that act upon the object's data. They are defined within the object definition or using the `prototype` property.
+
+**4. Dynamic Addition and Deletion:**
+
+You can dynamically add or remove properties from an object using dot notation or bracket notation, respectively.
+
+```javascript
+person.jobTitle = "Developer"; // Adding a property
+delete person.occupation; // Removing a property
+
+console.log(person); // Updated object
+```
+
+## Prototypes and Prototype Inheritance
+
+**1. Prototypes:**
+
+Every object in JavaScript has a hidden property called `prototype`. This prototype acts as a blueprint for the object, defining the properties and methods that the object inherits.
+
+```javascript
+function User(firstName, lastName, age) {
+  // ... constructor code
+}
+
+console.log(User.prototype); // This will show an empty object initially
+```
+
+**2. Prototype Inheritance:**
+
+When you create an object using a constructor function, it inherits properties and methods from its constructor's prototype. This allows for code reuse and avoids redundancy.
+
+```javascript
+User.prototype.getFullName = function () {
+  return this.firstName + " " + this.lastName;
+};
+
+let user1 = new User("Alice", "Smith", 25);
+console.log(user1.getFullName()); // Output: "Alice Smith" (inherited from prototype)
+```
+
+**3. Modifying the Prototype:**
+
+Changes made to the constructor's prototype after object creation will also be reflected in existing objects that inherit from that prototype.
+
+```javascript
+User.prototype.greet = function () {
+  console.log("Hello, my name is " + this.getFullName());
+};
+
+user1.greet(); // Output: "Hello, my name is Alice Smith"
+```
+
+**4. Creating Your Own Prototypes:**
+
+You can also create your own prototype objects and use them as blueprints for other objects.
+
+```javascript
+let personPrototype = {
+  getFullName: function () {
+    return this.firstName + " " + this.lastName;
+  },
+};
+
+function Student(firstName, lastName, age, major) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+  this.major = major;
+}
+
+Student.prototype = personPrototype; // Setting the prototype for Student
+
+let student1 = new Student("Bob", "Jones", 20, "Computer Science");
+console.log(student1.getFullName()); // Output: "Bob Jones" (inherited from personPrototype)
+```
+
+## ES6 Classes
+
+**1. Class Syntax:**
+
+ES6 introduced a more traditional class syntax for object-oriented programming in JavaScript.
+
+```javascript
+class User {
+  constructor(firstName, lastName, age) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.age = age;
+  }
+
+  getFullName() {
+    return this.firstName + " " + this.lastName;
+  }
+}
+
+let user1 = new User("Alice", "Smith", 25);
+console.log(user1.getFullName()); // Output: "Alice Smith"
+
+// Inheritance using the extends keyword
+class Student extends User {
+  constructor(firstName, lastName, age, major) {
+    super(firstName, lastName, age); // Calling the parent constructor
+    this.major = major;
+  }
+
+  getMajor() {
+    return this.major;
+  }
+}
+
+let student1 = new Student("Bob", "Jones", 20, "Computer Science");
+console.log(student1.getFullName()); // Output: "Bob Jones" (inherited from User)
+console.log(student1.getMajor()); // Output: "Computer Science"
+```
+
+**2. Class Properties:**
+
+- **Static methods:** These methods are associated with the class itself, not individual instances of the class, and can be called without creating an object.
+
+```javascript
+class MathUtils {
+  static add(x, y) {
+    return x + y;
+  }
+
+  static multiply(x, y) {
+    return x * y;
+  }
+}
+
+console.log(MathUtils.add(5, 3)); // Output: 8 (calling static method without creating an object)
+```
+
+- **Getters and Setters:** These provide special syntax for accessing and modifying object properties in a controlled way.
+
+```javascript
+class Person {
+  constructor(firstName, lastName) {
+    this._fullName = firstName + " " + lastName; // Private property (using convention)
+  }
+
+  get fullName() {
+    return this._fullName; // Getter method
+  }
+
+  set fullName(name) {
+    this._fullName = name.toUpperCase(); // Setter method (performs validation or logic before assigning)
+  }
+}
+
+let person1 = new Person("John", "Doe");
+console.log(person1.fullName); // Output: "John Doe"
+
+person1.fullName = "Jane Smith"; // Using the setter
+console.log(person1.fullName); // Output: "JANE SMITH"
+```
+
+**3. Summary:**
+
+ES6 classes provide a more concise and familiar syntax for object-oriented programming in JavaScript, allowing developers to define classes with properties, methods, inheritance, and various features like static methods and getters/setters.
+
+**Key Points:**
+
+- Objects represent key-value pairs and provide a flexible way to model real-world entities.
+- Prototypes act as blueprints for objects, defining inherited properties and methods.
+- ES6 classes offer a more structured approach to object creation and inheritance.
+- Understanding these concepts is crucial for building well-organized and reusable JavaScript applications.
+
+**Practice Exercises:**
+
+1. Create a `Car` class with properties like `make`, `model`, and `year`, and methods like `accelerate` and `brake`.
+2. Implement a `Point` class with properties `x` and `y` and methods to calculate distance from another `Point` object.
+3. Design a simple `ShoppingCart` class with methods to add items, remove items, and calculate the total price.
+
+By practicing and experimenting with object-oriented concepts, you'll gain the skills to create more complex and maintainable JavaScript programs.

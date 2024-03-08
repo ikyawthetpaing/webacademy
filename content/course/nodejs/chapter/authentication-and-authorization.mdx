@@ -1,0 +1,247 @@
+---
+index: 10
+title: "Node.js Authentication & Authorization"
+---
+
+In the realm of web development, safeguarding user identities and controlling access to resources are paramount. This chapter delves into implementing **authentication** and **authorization** strategies in Node.js applications, focusing on popular techniques like **JSON Web Tokens (JWTs)**, **OAuth**, and leveraging the **Passport.js** library for streamlined authentication workflows. Additionally, we'll explore **Role-Based Access Control (RBAC)** to manage user permissions effectively.
+
+## 1. The Guardians at the Gate: Understanding Authentication and Authorization
+
+**Authentication** verifies the identity of a user, answering the question: "Who are you?". Common mechanisms include:
+
+- **Session-based authentication:** Stores user information on the server side (e.g., in cookies) for a limited duration.
+- **Token-based authentication:** Utilizes tokens (like JWTs) to identify users without relying on server-side session management.
+
+**Authorization** determines what a user is allowed to do, addressing the question: "What can you do?". Common approaches include:
+
+- **Capability-based access control (CBAC):** Grants access based on specific capabilities associated with users or resources.
+- **Role-based access control (RBAC):** Assigns roles to users and grants permissions based on those roles.
+
+Understanding the distinction between these concepts is crucial for building secure and efficient access control measures in your applications.
+
+## 2. Forging the Key: Implementing Authentication Strategies
+
+Here, we'll focus on two popular token-based authentication strategies:
+
+**a) JWT Authentication:**
+
+**i) Setting Up:**
+
+```bash
+npm install jsonwebtoken
+```
+
+**ii) Creating a JWT:**
+
+```javascript
+const jwt = require("jsonwebtoken");
+const secret = "your_secret_key"; // Replace with a strong secret key
+
+function generateAccessToken(userId) {
+  return jwt.sign({ userId }, secret, { expiresIn: "1h" }); // Set appropriate expiration time
+}
+```
+
+**iii) Verifying a JWT:**
+
+```javascript
+function verifyAccessToken(token) {
+  try {
+    return jwt.verify(token, secret);
+  } catch (err) {
+    return null;
+  }
+}
+```
+
+**iv) Protecting Routes:**
+
+```javascript
+const express = require("express");
+const app = express();
+
+app.get("/protected", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  const token = authHeader.split(" ")[1];
+  const decoded = verifyAccessToken(token);
+
+  if (!decoded) {
+    return res.status(401).send("Invalid token");
+  }
+
+  // Access user data from decoded object (e.g., decoded.userId)
+  res.send("Welcome, authorized user!");
+});
+
+app.listen(3000, () => {
+  console.log("Server listening on port 3000");
+});
+```
+
+**Explanation:**
+
+- We use the `jsonwebtoken` library for JWT functionalities.
+- The `generateAccessToken` function creates a JWT with user data and an expiration time.
+- The `verifyAccessToken` function verifies the JWT and returns the decoded data if valid.
+- In the protected route, we check for a valid JWT in the Authorization header and access user data if authorized.
+
+**b) OAuth Authentication:**
+
+OAuth is an authorization framework allowing users to grant third-party applications access to their data without sharing their login credentials with those applications. Popular providers include Google, Facebook, and GitHub.
+
+**Implementation:**
+
+1. Choose an OAuth provider and follow their specific integration guide.
+2. Use the provider's SDKs to handle authentication requests and obtain access tokens.
+3. Verify the access token with the provider's API.
+4. Extract user information from the verified token and grant access based on the obtained data.
+
+**Remember:**
+
+- Securely store your secret key in a secure environment (e.g., environment variables).
+- Set appropriate expiration times for JWTs to prevent unauthorized access after a certain period.
+- Choose an OAuth provider that aligns with your specific needs and user base.
+
+## 3. Streamlining the Process: Using Passport.js
+
+**Passport.js** is a popular Node.js middleware for authentication, offering strategies for various providers like JWT, OAuth, and others. It simplifies the process of handling authentication workflows and integrating different strategies.
+
+**Example (Using Passport.js with JWT):**
+
+```javascript
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const JWTStragety = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
+
+// ... (user data and authentication logic)
+
+// Define local strategy (replace with your authentication logic)
+const localStrategy = new LocalStrategy((username, password, done) => {
+  // ... (verify username and password against your user data)
+  if (username === "user" && password === "password") {
+    return done(null, { username }); // Replace with actual user data
+  } else {
+    return done(null, false);
+  }
+});
+
+// Define JWT strategy
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: "your_secret_key",
+};
+const jwtStrategy = new JWTStragety(jwtOptions, (payload, done) => {
+  // ... (verify user based on payload data)
+  const user = { username: payload.userId }; // Replace with actual user lookup
+  if (user) {
+    return done(null, user);
+  } else {
+    return done(null, false);
+  }
+});
+
+// Use Passport middleware
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+// ... (apply Passport middleware to routes)
+
+app.post(
+  "/login",
+  passport.authenticate("local", { session: false }),
+  (req, res) => {
+    const token = generateAccessToken(req.user.username); // Generate JWT with user data
+    res.json({ token });
+  }
+);
+
+app.get(
+  "/protected",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // Access user data from req.user
+    res.send("Welcome, " + req.user.username);
+  }
+);
+```
+
+**Explanation:**
+
+- We require Passport.js, authentication strategies (`LocalStrategy`, `JWTStragety`), and `ExtractJwt` for extracting JWTs from headers.
+- We define strategies for local authentication (replace with your actual logic) and JWT verification based on the secret key.
+- We use Passport middleware to handle authentication workflows.
+- The login route authenticates the user and generates a JWT if successful.
+- The protected route requires JWT authentication and grants access if valid.
+
+**Remember:**
+
+- Replace the placeholder local authentication logic with your actual implementation.
+- Choose appropriate strategies based on your specific authentication needs.
+
+## 4. Enforcing Rules: Implementing Role-Based Access Control (RBAC)
+
+**RBAC** assigns roles to users and grants permissions based on those roles. This provides a granular way to control access to different resources and functionalities in your application.
+
+**Example (Using a simple RBAC library):**
+
+```javascript
+const rbac = require("rbac");
+
+const roles = {
+  admin: {
+    can: ["read:all", "write:all", "delete:all"],
+  },
+  editor: {
+    can: ["read:all", "write:own"],
+  },
+  user: {
+    can: ["read:public"],
+  },
+};
+
+const permissions = {
+  "read:all": ["/users", "/posts"],
+  "write:all": ["/users/create", "/posts/create"],
+  "delete:all": ["/users/delete", "/posts/delete"],
+  "read:public": ["/public-posts"],
+  "write:own": ["/posts/edit"],
+};
+
+const rbacInstance = rbac({ roles, permissions });
+
+function hasPermission(user, permission) {
+  return rbacInstance.can(user.role, permission);
+}
+
+app.get("/users", (req, res) => {
+  const user = req.user; // Replace with actual user data
+  if (hasPermission(user, "read:all")) {
+    // ... (retrieve all users)
+    res.json(users);
+  } else {
+    res.status(403).send("Forbidden");
+  }
+});
+```
+
+**Explanation:**
+
+- We use an `rbac` library to manage roles and permissions.
+- We define roles and their associated permissions.
+- The `hasPermission` function checks if a user has a specific permission based on their role.
+- In the protected route, we check user permissions before granting access to resources.
+
+**Remember:**
+
+- Choose an RBAC library or framework that aligns with your project complexity.
+- Define roles and permissions based on your specific application requirements.
+
+## Conclusion
+
+By understanding authentication and authorization concepts, implementing strategies like JWTs and OAuth with Passport.js, and enforcing access control through RBAC, you've equipped yourself with valuable tools to safeguard your Node.js applications and manage user access effectively. As you progress, explore advanced topics like session management, user management practices, and continuous improvement of your security measures for robust and secure application development.

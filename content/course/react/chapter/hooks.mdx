@@ -1,0 +1,177 @@
+---
+index: 11
+title: "React Hooks"
+---
+
+React Hooks were introduced in version 16.8, offering a powerful way to "hook into" React state and lifecycle features from functional components. This chapter delves into understanding Hooks, exploring commonly used ones, and demonstrating their potential for refactoring class components.
+
+## 1. Understanding React Hooks
+
+**Concept:**
+
+Hooks are functions that allow you to "hook into" React state and lifecycle features from functional components. They cannot be called directly within the render function; instead, they are called at the top level of a functional component.
+
+**Benefits:**
+
+- **Improved code organization:** Hooks promote cleaner and more concise code compared to complex class components, especially for managing state and side effects.
+- **Reusability:** Hooks can be easily reused across different components, promoting code sharing and maintainability.
+- **Functional component advantages:** You can leverage the benefits of functional components, such as simpler reasoning about state updates and better testing capabilities.
+
+## 2. Commonly Used Hooks:
+
+Here are some of the most common Hooks:
+
+**2.1 useState Hook:**
+
+- Manages component state by returning an array containing the current state value and a function to update it.
+
+```jsx
+import React, { useState } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const increment = () => {
+    setCount(count + 1);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+**2.2 useEffect Hook:**
+
+- Performs side effects in functional components, similar to `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` in class components.
+
+```jsx
+import React, { useEffect } from "react";
+
+const DataFetcher = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("https://api.example.com/data");
+      const data = await response.json();
+      setData(data);
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures fetching data only once
+
+  return (
+    <div>
+      {data ? <p>Fetched data: {data.message}</p> : <p>Loading data...</p>}
+    </div>
+  );
+};
+
+export default DataFetcher;
+```
+
+**2.3 useContext Hook:**
+
+- Allows accessing context values established by the `createContext` API from functional components.
+
+```jsx
+// Refer to Chapter 5: State Management - Context API for explanation
+```
+
+**2.4 Custom Hooks:**
+
+- Create custom functions that reuse state logic and side effects across different components, promoting code organization and reusability.
+
+```jsx
+import React, { useState } from "react";
+
+const useForm = (initialValue) => {
+  const [value, setValue] = useState(initialValue);
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  return { value, handleChange };
+};
+
+const MyForm = () => {
+  const { value, handleChange } = useForm("");
+
+  return (
+    <form>
+      <input type="text" value={value} onChange={handleChange} />
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+export default MyForm;
+```
+
+## 3. Refactoring Class Components with Hooks
+
+Hooks allow you to gradually migrate the functionality of class components to functional components, potentially simplifying your codebase and improving maintainability. Here's an example:
+
+**Class Component:**
+
+```jsx
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  increment = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+  render() {
+    return (
+      <div>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.increment}>Increment</button>
+      </div>
+    );
+  }
+}
+
+export default Counter;
+```
+
+**Refactored with Hooks:**
+
+```jsx
+import React, { useState } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const increment = () => {
+    setCount(count + 1);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+This example demonstrates how the `useState` Hook replaces the class constructor and state management logic, while the `increment` function and JSX remain similar.
+
+## Conclusion:
+
+Understanding and utilizing Hooks empowers you to create functional components with state management and side effect capabilities. Explore commonly used Hooks like `useState`, `useEffect`, and `useContext`, and embrace custom Hooks for code reusability. Furthermore, consider refactoring legacy class components using Hooks to potentially improve maintainability and unlock the full potential of functional components in your React applications.
+
+Remember, practice and experimentation are key to mastering Hooks and harnessing their full potential for building dynamic and engaging user interfaces.

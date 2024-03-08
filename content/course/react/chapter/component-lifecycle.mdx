@@ -1,0 +1,99 @@
+---
+index: 5
+title: "React Component Lifecycle"
+---
+
+In the world of React, components don't live in isolation. They are born, grow, and eventually, may disappear – just like in the real world. This journey is known as the **component lifecycle**, and understanding its different phases is crucial for building robust and maintainable React applications.
+
+## 1. Understanding Component Lifecycle Methods
+
+React components go through various phases throughout their existence, and specific methods are available to perform actions at each stage of this lifecycle. These methods are called **lifecycle methods**.
+
+**Key Lifecycle Methods:**
+
+- **Mounting:**
+  - `constructor()`: Used to initialize state and bind event handlers (optional).
+  - `componentDidMount()`: Invoked immediately after a component is inserted into the DOM. This is an ideal place to fetch data, set up subscriptions, or perform other side effects that require access to the DOM.
+- **Updating:**
+  - `getDerivedStateFromProps(nextProps, prevState)` (optional): Used to update state based on changes in props before the component re-renders.
+  - `shouldComponentUpdate(nextProps, nextState)` (optional): Allows controlling whether a component should re-render based on changes in props or state.
+  - `render()`: Defines the UI of the component based on its current state and props. React calls this method whenever a re-render is necessary.
+  - `getSnapshotBeforeUpdate(prevProps, prevState)` (optional): Used to capture a snapshot of the DOM before it is updated.
+  - `componentDidUpdate(prevProps, prevState, snapshot)` (optional): Invoked immediately after the component updates. Useful for side effects that rely on DOM changes or state updates.
+- **Unmounting:**
+  - `componentWillUnmount()`: Invoked immediately before a component is removed from the DOM. This is typically used to clean up any subscriptions, timers, or other resources attached to the component.
+
+**Remember:** Not all lifecycle methods are mandatory in every component. Choose the appropriate methods based on your specific needs and avoid unnecessary complexity.
+
+## 2. Component Mounting, Updating, and Unmounting Phases
+
+The component lifecycle can be broadly categorized into three main phases:
+
+- **Mounting:** When a component is first created and inserted into the DOM, the following sequence of events occurs:
+
+  1. **Constructor:** The component's constructor is invoked, allowing you to initialize state and bind event handlers (optional).
+  2. **getDerivedStateFromProps:** (Optional) This method is called before the first render and subsequent updates to allow state updates based on changes in props.
+  3. **render:** The component's initial UI is generated based on its state and props.
+  4. **componentDidMount:** This method is called after the component is fully mounted and inserted into the DOM. It's a good time to fetch data, set up subscriptions, or interact with the DOM.
+
+- **Updating:** Whenever the component's state or props change, the following sequence might occur (depending on the chosen lifecycle methods):
+
+  1. **getDerivedStateFromProps:** (Optional) This method is called to update state based on new props before potentially re-rendering.
+  2. **shouldComponentUpdate:** (Optional) This method allows you to control whether the component should re-render based on the upcoming changes in props or state. By default, it returns `true` for re-rendering.
+  3. **getSnapshotBeforeUpdate:** (Optional) This method allows capturing a snapshot of the DOM before it's updated, potentially for use in `componentDidUpdate`.
+  4. **render:** The component re-renders its UI based on the updated state and props.
+  5. **getSnapshotBeforeUpdate:** (Optional) If used, this method gets called after the DOM is updated.
+  6. **componentDidUpdate:** (Optional) This method is invoked after the component has successfully updated and the DOM is updated accordingly.
+
+- **Unmounting:** When a component is removed from the DOM, the `componentWillUnmount` method is invoked before its destruction. This is an ideal time to clean up any resources associated with the component, such as event listeners, subscriptions, or timers.
+
+**Remember:** The entire lifecycle of a component might not always involve all these methods. The specific methods used depend on the complexity and requirements of your component.
+
+## 3. Using Lifecycle Methods Effectively
+
+Here are some tips for using lifecycle methods effectively:
+
+- **Start with mounting methods:** Focus on `constructor` and `componentDidMount` for most basic components.
+- **Use optional methods judiciously:** Utilize `getDerivedStateFromProps`, `shouldComponentUpdate`, `getSnapshotBeforeUpdate`, and `componentDidUpdate` only when necessary for specific functionalities.
+- **Clean up resources in unmounting:** Always clean up resources in `componentWillUnmount` to prevent memory
+- **Fetching data:** Use `componentDidMount` to fetch data from an API or local storage after the component is mounted and ready to interact with the DOM.
+- **Setting up subscriptions:** Subscribe to events or data sources in `componentDidMount` and clean up the subscriptions in `componentWillUnmount` to prevent memory leaks.
+- **Handling form submissions:** Utilize `componentDidUpdate` after a form submission to potentially reset the form or perform other actions based on the updated state.
+- **Optimizing re-renders:** Use `shouldComponentUpdate` to prevent unnecessary re-renders of the component if the changes in props or state are not significant enough to warrant a UI update.
+
+**Example:**
+
+```jsx
+class NewsList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { articles: [] };
+  }
+
+  componentDidMount() {
+    fetch("https://api.example.com/news")
+      .then((response) => response.json())
+      .then((data) => this.setState({ articles: data.articles }));
+  }
+
+  componentWillUnmount() {
+    // Clean up any subscriptions if needed
+  }
+
+  render() {
+    return (
+      <ul>
+        {this.state.articles.map((article) => (
+          <li key={article.id}>{article.title}</li>
+        ))}
+      </ul>
+    );
+  }
+}
+```
+
+In this example, the `NewsList` component fetches news articles from an API in `componentDidMount` and displays them in a list. The `componentWillUnmount` is included as a placeholder for any potential cleanup tasks.
+
+## Conclusion:
+
+Comprehending the component lifecycle and utilizing appropriate lifecycle methods effectively empowers you to build well-structured, maintainable, and performant React applications. By understanding the mounting, updating, and unmounting phases, and leveraging the available lifecycle methods judiciously, you can create components that react efficiently to changes, manage resources effectively, and provide a seamless user experience.

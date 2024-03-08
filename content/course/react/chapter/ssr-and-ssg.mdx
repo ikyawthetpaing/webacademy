@@ -1,0 +1,202 @@
+---
+index: 17
+title: "React Server-side Rendering (SSR) & Static Site Generation (SSG)"
+---
+
+In today's web landscape, delivering a fast and engaging user experience is crucial. This chapter delves into Server-side Rendering (SSR) and Static Site Generation (SSG), two powerful rendering techniques in Next.js, exploring their functionalities, implementation, and benefits for React applications.
+
+## 1. Understanding SSR and SSG:
+
+**1.1. Server-side Rendering (SSR):**
+
+- **Concept:** With SSR, the server renders the entire HTML content, including dynamic data, on each request. This process involves:
+  - The server receives a request from the client (browser).
+  - The server fetches any necessary data (e.g., from an API).
+  - The server uses the data to render the React components as HTML.
+  - The fully rendered HTML is sent to the client (browser).
+
+**1.2. Static Site Generation (SSG):**
+
+- **Concept:** With SSG, the HTML content is pre-rendered at build time, including any necessary data. This process involves:
+  - The developer defines which pages need to be pre-rendered.
+  - During the build process, Next.js pre-renders the pages using the provided data.
+  - The pre-rendered HTML files are served to the client (browser).
+
+**2. Choosing the Right Technique:**
+
+- **SSR:** Ideal for applications requiring real-time data updates, personalized user experiences, or complex interactions.
+- **SSG:** Best suited for content-heavy websites, SEO-focused pages, or situations where real-time data updates are not essential.
+
+## 2. Setting up SSR with Next.js:
+
+**1. Creating a Next.js Project:**
+
+```bash
+npx create-next-app my-ssr-app
+```
+
+**2. Utilizing `getStaticProps`:**
+
+- Use `getStaticProps` in your page component to fetch data at build time.
+- This function is executed on the server during the build process, allowing you to fetch and process data before rendering the page.
+
+**Example:**
+
+```jsx
+// pages/blog/[slug].js
+
+export async function getStaticProps({ params }) {
+  const { slug } = params;
+  const response = await fetch(`https://api.example.com/posts/${slug}`);
+  const data = await response.json();
+
+  return {
+    props: {
+      post: data,
+    },
+  };
+}
+
+const BlogPost = ({ post }) => {
+  return (
+    <div>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </div>
+  );
+};
+
+export default BlogPost;
+```
+
+**Explanation:**
+
+1. The `getStaticProps` function is defined within the page component.
+2. It receives an object containing page parameters (`params`).
+3. We use `fetch` to retrieve data from an API based on the provided slug.
+4. The fetched data is returned as props to the page component, making it available for rendering.
+
+**3. Dynamic Routes:**
+
+- Leverage `getStaticPaths` in combination with `getStaticProps` to pre-render pages for specific routes.
+
+```jsx
+// pages/blog/[slug].js
+
+export async function getStaticPaths() {
+  const response = await fetch("https://api.example.com/posts");
+  const posts = await response.json();
+
+  const paths = posts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+
+  return {
+    paths,
+    fallback: false, // Set to 'blocking' or 'true' for dynamic data fetching
+  };
+}
+
+// ... rest of the code (same as previous example)
+```
+
+**Explanation:**
+
+1. The `getStaticPaths` function retrieves a list of post slugs from the API.
+2. It iterates through the posts to create an array of `paths` objects, defining the routes for each post.
+3. The `fallback` prop determines how to handle unseen slugs (e.g., `false` for 404 errors, `blocking` or `true` for dynamic data fetching).
+
+## 3. Pre-rendering Pages for Improved Performance:
+
+- **Benefits:**
+  - Faster initial page load times.
+  - Improved SEO as content is readily available to search engines.
+  - Reduced server load as pages are pre-rendered.
+
+## 4. SEO Considerations:
+
+- SSR and SSG can both be SEO-friendly, but some aspects require attention:
+  - For SSR pages, ensure proper server-side rendering of content and meta tags.
+  - For SSG pages, ensure essential content is pre-rendered and available in the initial HTML.
+  - Consider using server-side rendering where SEO is crucial and real-time data updates are necessary.
+  - Utilize techniques like pre-rendering and sitemaps to improve search engine crawling and indexing.
+
+## 5. Choosing Between SSR and SSG:
+
+- The optimal choice depends on your specific application requirements. Consider factors like:
+  - **Content type:** Static content benefits from SSG for faster loading and SEO advantages.
+  - **Data updates:** Real-time data updates often favor SSR for dynamic rendering.
+  - **User experience:** Complex interactions or personalization might necessitate SSR for a seamless experience.
+
+## 6. Combining SSR and SSG:
+
+- Next.js allows combining SSR and SSG within the same application.
+- Use SSR for dynamic pages requiring real-time data updates, while leveraging SSG for static content-heavy pages.
+
+## 7. Example: Combining Techniques:
+
+```jsx
+// pages/blog.js (SSG for the blog listing page)
+
+export async function getStaticProps() {
+  const response = await fetch('https://api.example.com/posts');
+  const posts = await response.json();
+
+  return {
+    props: {
+      posts,
+    },
+  };
+}
+
+const BlogList = ({ posts }) => {
+  return (
+    <div>
+      <h1>Blog Posts</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>
+            <a href={`/blog/${post.slug}`}>{post.title}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default BlogList;
+
+// pages/blog/[slug].js (SSR for individual blog posts)
+
+export async function getServerSideProps({ params }) {
+  const { slug } = params;
+  const response = await fetch(`https://api.example.com/posts/${slug}`);
+  const data = await response.json();
+
+  return {
+    props: {
+      post: data,
+    },
+  };
+}
+
+const BlogPost = ({ post }) => {
+  return (
+    <div>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </div>
+  );
+};
+
+export default BlogPost;
+```
+
+**Explanation:**
+
+1. `pages/blog.js` uses SSG to pre-render the blog listing page with static data.
+2. `pages/blog/[slug].js` utilizes SSR for individual blog posts, allowing for potentially dynamic content and personalization.
+
+## Conclusion:
+
+By understanding SSR, SSG, and their implementation in Next.js, you can enhance your React applications' performance, SEO, and user experience. Carefully choosing the appropriate technique or a combination of both, based on your project's needs, empowers you to deliver an exceptional web experience. Remember, continuously evaluate and optimize your rendering strategies as your application evolves.

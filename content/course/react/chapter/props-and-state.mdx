@@ -1,0 +1,215 @@
+---
+index: 3
+title: "React Props & State"
+---
+
+In React, managing data effectively plays a crucial role in building dynamic and responsive user interfaces. This chapter delves into two key concepts: **props** and **state**, exploring how they work and how to utilize them effectively in your React components.
+
+## 1. Passing Props to Components
+
+**Props (short for Properties)** are a way to pass data **down** from a parent component to its child components. They act like arguments passed to functions, providing information and data that the child component needs to render its UI.
+
+**Passing and Receiving Props:**
+
+1. **In the parent component:** Define props within the opening tag of the child component, similar to HTML attributes:
+
+```jsx
+const name = "Alice";
+
+function ParentComponent() {
+  return <ChildComponent name={name} age={30} />;
+}
+```
+
+2. **In the child component:** Access props using the `props` object within the component:
+
+```jsx
+function ChildComponent(props) {
+  return (
+    <h1>
+      Hello, {props.name}! You are {props.age} years old.
+    </h1>
+  );
+}
+```
+
+**Props as Read-only Values:**
+
+- Props are **read-only** within the child component. They cannot be directly modified by the child component.
+- This ensures data consistency and prevents unintended side effects in the application.
+
+**Example:**
+
+```jsx
+function Product(props) {
+  return (
+    <div>
+      <h2>{props.name}</h2>
+      <p>Price: ${props.price}</p>
+    </div>
+  );
+}
+
+function App() {
+  const products = [
+    { name: "Laptop", price: 1000 },
+    { name: "Phone", price: 500 },
+  ];
+
+  return (
+    <div>
+      {products.map((product) => (
+        <Product key={product.name} name={product.name} price={product.price} />
+      ))}
+    </div>
+  );
+}
+```
+
+This example demonstrates how props can be passed to a `Product` component from the `App` component, allowing the `Product` component to display information based on the provided data.
+
+## 2. Using State in Class Components
+
+**State** is a way to manage **internal data** within a **class component**. It allows the component to maintain information that can change over time, triggering re-rendering of the component and its children when the state updates.
+
+**Managing State:**
+
+1. **In the constructor:** Define the initial state using the `constructor` method and the `this.state` object:
+
+```javascript
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+  // ... other methods
+}
+```
+
+2. **Accessing and Updating State:**
+
+- Use `this.state` to access the current state within the component.
+- Use the `setState` method to update the state:
+
+```javascript
+handleClick = () => {
+  this.setState({ count: this.state.count + 1 });
+};
+
+render() {
+  return (
+    <div>
+      <p>Count: {this.state.count}</p>
+      <button onClick={this.handleClick}>Increment</button>
+    </div>
+  );
+}
+```
+
+**Important Note:**
+
+- Always update the state using `setState` to ensure that React can properly manage the updates and re-render the component and its children accordingly.
+- Avoid directly modifying the state object, as this can lead to unexpected behavior.
+
+**Example:**
+
+```jsx
+class TodoList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { todos: [] };
+  }
+
+  addTodo = (text) => {
+    this.setState({ todos: [...this.state.todos, { text, completed: false }] });
+  };
+
+  render() {
+    return (
+      <div>
+        <h2>Todo List</h2>
+        <input
+          type="text"
+          placeholder="Add a todo..."
+          onChange={(e) => this.addTodo(e.target.value)}
+        />
+        <ul>
+          {this.state.todos.map((todo) => (
+            <li key={todo.text}>{todo.text}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+```
+
+This example demonstrates how a class component (`TodoList`) manages its internal state (`todos`) using `constructor` and the `setState` method to:
+
+- **Initialize the initial state:** In the `constructor`, the `this.state` object is set to an empty array (`[]`) to represent the initial list of todos.
+- **Add new todos:** The `addTodo` method utilizes `setState` to update the `todos` array with a new todo object containing the text and a `completed` property.
+- **Rendering:** The `render` method displays the list of todos using `map` and displays their text.
+
+This combined approach allows the `TodoList` component to maintain its internal list of todos and update it dynamically based on user interaction, ensuring the UI reflects the current state of the component.
+
+## 3. Updating state with setState()
+
+The `setState` method is crucial for updating state in React components. Here are some key points to remember:
+
+- **Asynchronous Updates:** `setState` updates are **asynchronous**, meaning the state might not be immediately available after the call. Use `this.setState` with a callback function if you need to access the updated state within the same method:
+
+```jsx
+handleClick = () => {
+  this.setState({ count: this.state.count + 1 }, () => {
+    console.log("State updated:", this.state.count); // Access updated state
+  });
+};
+```
+
+- **Merging Updates:** When calling `setState` multiple times in rapid succession, React batches these updates and performs them efficiently. This is because React merges the updates before re-rendering the component, resulting in a single re-render and improved performance.
+- **Partial State Updates:** You can update specific parts of the state object instead of replacing the entire object:
+
+```jsx
+incrementCount = () => {
+  this.setState({ count: this.state.count + 1 });
+};
+
+decrementCount = () => {
+  this.setState((prevState) => ({ count: prevState.count - 1 }));
+};
+```
+
+**Example:**
+
+```jsx
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  incrementCount = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+  decrementCount = () => {
+    this.setState((prevState) => ({ count: prevState.count - 1 }));
+  };
+
+  render() {
+    return (
+      <div>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.incrementCount}>Increment</button>
+        <button onClick={this.decrementCount}>Decrement</button>
+      </div>
+    );
+  }
+}
+```
+
+This example showcases how `setState` is used to update the `count` within the `Counter` component. Both `incrementCount` and `decrementCount` utilize `setState` to modify the state, ensuring proper management and re-rendering.
+
+## Conclusion:
+
+Props and state are fundamental concepts in React for managing data flow and building dynamic UIs. While props are efficient for passing data down the component hierarchy, state allows individual components to manage internal data and trigger re-renders when necessary. By effectively utilizing props and state, you can create interactive and responsive React applications that cater to changing user interactions and data updates.

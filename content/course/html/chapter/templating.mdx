@@ -1,0 +1,97 @@
+---
+index: 17
+title: "HTML Templating"
+---
+
+Welcome, web developers! Imagine building a website where content magically appears based on user interactions or data changes. This magic lies in the world of **HTML templating engines**. Buckle up as we explore how these tools transform static HTML into dynamic wonders!
+
+## Beyond the Basics: The Need for Templating
+
+Remember hand-coding every page with repetitive HTML? Templating engines come to the rescue! They separate content and presentation, allowing you to:
+
+- **Create reusable templates:** Write HTML code once and use it multiple times with different data.
+- **Simplify dynamic content:** Generate HTML dynamically based on user actions, server-side data, or APIs.
+- **Improve maintainability:** Update templates in one place, impacting all related pages instantly.
+
+## Meet the Players: Handlebars and Mustache
+
+Popular templating engines abound, each with its unique features. Let's explore two widely used options:
+
+**Handlebars:**
+
+- **Syntax:** Uses curly braces (`{{ }}`) to define variables and expressions.
+- **Features:** Offers powerful features like conditionals, loops, and helpers for complex logic.
+- **Example:**
+
+```html
+<ul>
+  {{#each items}}
+  <li>{{name}}</li>
+  {{/each}}
+</ul>
+```
+
+**Mustache:**
+
+- **Syntax:** Uses double curly braces (`{{ }}`) for variables and expressions.
+- **Features:** Simple and lightweight, ideal for basic templating needs.
+- **Example:**
+
+```html
+<h1>Hello, {{name}}!</h1>
+<p>Your favorite color is {{color}}.</p>
+```
+
+**Choosing the right engine:** Consider your project's complexity, desired features, and integration needs. Both Handlebars and Mustache offer excellent online documentation and communities for support.
+
+## Building Dynamic Pages: Putting Templates to Work
+
+Imagine creating a product catalog where each item has its own page. Instead of coding each page individually, you can use a template:
+
+```html
+<h1>{{name}}</h1>
+<img src="{{image}}" alt="{{name}}" />
+<p>{{description}}</p>
+
+const products = [ { name: "Mug", image: "mug.jpg", description: "The perfect
+cup for your morning coffee." }, { name: "T-shirt", image: "tshirt.jpg",
+description: "Show off your style with this comfy tee." } ]; // Loop through
+products and render each using the template products.forEach(product => { const
+template =
+Handlebars.compile(document.getElementById('product-template').innerHTML); const
+html = template(product); document.getElementById('products').innerHTML += html;
+});
+```
+
+This code fetches product data and uses the template to generate HTML dynamically, creating individual product pages without repetitive coding.
+
+## Integrating with Frameworks: Powering Up Your Apps
+
+Templating engines seamlessly integrate with popular JavaScript frameworks like Angular and React:
+
+**Angular:**
+
+- Use `ngTemplate` directive to embed templates within your Angular components.
+- Leverage dependency injection to pass data from components to templates.
+
+**React:**
+
+- Create reusable components using JSX, which allows writing HTML-like structures within JavaScript code.
+- Use libraries like `react-dom` to render components and update the DOM dynamically.
+
+**Remember:** Choose the framework that aligns with your project requirements and development preferences.
+
+## Beyond the Basics: Advanced Techniques
+
+- **Partial templates:** Break down complex templates into smaller, reusable units.
+- **Helpers:** Create custom functions to extend template functionality.
+- **Pre-rendering:** Render templates on the server for faster initial page load.
+
+## Additional Resources:
+
+- [Handlebars.js](https://handlebarsjs.com/)
+- [Mustache.js](https://github.com/janl/mustache.js/blob/master/README.md)
+- [Angular Templating](https://angular.io/guide/displaying-data)
+- [React JSX](https://reactjs.org/docs/introducing-jsx.html)
+
+By mastering HTML templating, you unlock a powerful tool for building dynamic and flexible web applications. Experiment with different engines and frameworks, explore advanced techniques, and unleash your creativity to bring your web projects to life! Remember, the possibilities are endless.

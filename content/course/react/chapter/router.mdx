@@ -1,0 +1,174 @@
+---
+index: 9
+title: "React Router"
+---
+
+React Router empowers you to manage navigation and routing within your React applications. It provides a declarative way to define routes, map them to URL paths, and render appropriate components based on the current URL.
+
+## 1. Setting up Routing in React:
+
+**1.1 Installing React Router:**
+
+Start by installing the `react-router-dom` package using npm or yarn:
+
+```bash
+npm install react-router-dom
+```
+
+**1.2 Importing and Using BrowserRouter:**
+
+Wrap your entire application with the `BrowserRouter` component from `react-router-dom`:
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+
+import App from "./App";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+```
+
+This establishes the foundation for routing within your application.
+
+## 2. Defining Routes:
+
+**2.1 Using Route Components:**
+
+The `Route` component from `react-router-dom` defines a mapping between a URL path and the component that should be rendered for that path:
+
+```jsx
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import About from "./components/About";
+// Our components
+import Home from "./components/Home";
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
+```
+
+**Explanation:**
+
+1. We import necessary components from `react-router-dom`.
+2. The `Routes` component wraps our routes, providing a context for them.
+3. Each `Route` defines a path (e.g., "/" for home, "/about" for about page) and the component to render for that path using the `element` prop.
+
+**2.2 Nested Routes:**
+
+To create nested routes, leverage additional `Route` components within a parent route:
+
+```jsx
+// ... previous imports and App component definition
+
+const App = () => {
+  // ...
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />}>
+          <Route path="/about/team" element={<Team />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
+```
+
+Here, the `/about` route has a nested child route for `/about/team`, leading to the `Team` component rendering when that specific path is accessed.
+
+## 3. Route Parameters: Capturing Dynamic URLs
+
+**3.1 Using Colons (:) for Dynamic Values:**
+
+You can capture dynamic segments in URL paths using colons (`:`):
+
+```jsx
+// ... previous imports and App component definition
+
+const App = () => {
+  // ...
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about/:topic" element={<TopicDetails />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+```
+
+This route captures the value after the `/about/` path segment and stores it in a variable named `topic`.
+
+**3.2 Accessing Route Parameters:**
+
+Within the component rendered for the dynamic route, access the captured parameter using the `useParams` hook from `react-router-dom`:
+
+```jsx
+import React from "react";
+import { useParams } from "react-router-dom";
+
+const TopicDetails = () => {
+  const { topic } = useParams();
+
+  return (
+    <div>
+      <h1>Topic: {topic}</h1>
+      {/* Display details based on the captured topic parameter */}
+    </div>
+  );
+};
+```
+
+In this example, the `useParams` hook returns an object with the captured parameter (`topic`) which can be used to display details based on the specific URL path.
+
+## 4. Programmatic Navigation: Controlling Navigation from Code
+
+**4.1 Using useNavigate Hook:**
+
+The `useNavigate` hook from `react-router-dom` enables programmatic navigation from within your components:
+
+```jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+const MyButton = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/about");
+  };
+
+  return <button onClick={handleClick}>Go to About</button>;
+};
+```
+
+Here, the `useNavigate` hook is used to define a `navigate` function. Clicking the button triggers the `handleClick` function, which calls `navigate('/about')` to programmatically navigate the user to the `/about` route.
+
+**4.2 Additional Navigation Methods:**
+
+React Router also offers other navigation methods like `Link` for declarative navigation within JSX and `useLocation` for accessing information about the current URL.
+
+## Conclusion:
+
+Understanding React Router empowers you to build dynamic and well-structured single-page applications. By mastering route definitions, nested routes, parameter capturing, and programmatic navigation, you can create user-friendly and engaging experiences with clear navigation flows within your React applications. Remember to explore the documentation and experiment with different functionalities to fully utilize the power of React Router in your projects.

@@ -1,0 +1,190 @@
+---
+index: 6
+title: "Node.js HTTP & Web Servers"
+---
+
+Node.js excels in building web applications and APIs due to its non-blocking, event-driven nature. This chapter delves into the core concepts of creating HTTP servers in Node.js, handling requests and responses, serving static files, and building simple APIs.
+
+## 1. The Building Block: The `http` Module
+
+The **`http`** module is the foundation for building HTTP servers in Node.js. It provides functionalities for creating servers, listening for incoming requests, and sending responses.
+
+**Creating a Simple Server:**
+
+```javascript
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.write("Hello from Node.js server!");
+  res.end();
+});
+
+server.listen(3000, () => {
+  console.log("Server listening on port 3000");
+});
+```
+
+**Explanation:**
+
+1. We require the `http` module.
+2. We use `http.createServer` to create a server instance.
+3. The callback function is called for each incoming HTTP request (`req`) and its corresponding response (`res`).
+4. We set the response status code to 200 (OK) and the content type to plain text.
+5. We write the response message ("Hello from Node.js server!") to the response object.
+6. We call `res.end` to indicate the end of the response.
+7. We start the server, listening on port 3000.
+
+**Running the code:**
+
+1. Save the code as `server.js`.
+2. Open a terminal and navigate to the directory where you saved the file.
+3. Run the server: `node server.js`
+4. Open a web browser and navigate to `http://localhost:3000`. You should see "Hello from Node.js server!" displayed.
+
+## 2. Handling Requests and Responses: Understanding the Conversation
+
+**HTTP Requests:**
+
+- Initiated by a client (web browser, mobile app, etc.)
+- Contain information about the requested resource, method (GET, POST, etc.), headers, and optional body.
+
+**HTTP Responses:**
+
+- Sent by the server in response to a request.
+- Contain information about the success of the request, status code, headers, and optional body.
+
+**Request Object (`req`):**
+
+Provides access to various properties and methods related to the incoming request, including:
+
+- **`req.method`:** The HTTP method used (GET, POST, etc.).
+- **`req.url`:** The requested URL path.
+- **`req.headers`:** An object containing request headers.
+
+**Response Object (`res`):**
+
+Provides methods for crafting and sending the server's response, including:
+
+- **`res.writeHead(statusCode, headers)`:** Sets the response status code and headers.
+- **`res.write(data)`:** Writes data to the response body.
+- **`res.end()`:** Signals the end of the response.
+
+**Example:**
+
+```javascript
+http
+  .createServer((req, res) => {
+    console.log(`Received request: ${req.method} ${req.url}`);
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.write("Request details logged to the server console.");
+    res.end();
+  })
+  .listen(3000);
+```
+
+**Explanation:**
+
+1. We log the request method and URL to the console.
+2. We send a response with a 200 status code and a message indicating that the request details were logged.
+
+## 3. Serving Static Files: Delivering Content
+
+Node.js servers can efficiently serve static files like HTML, CSS, and JavaScript. Here's how:
+
+```javascript
+const http = require("http");
+const path = require("path");
+
+const server = http
+  .createServer((req, res) => {
+    const filePath = path.join(__dirname, "public", req.url);
+
+    // Check if the requested file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        // File not found, send a 404 error
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.write("404 Not Found");
+        res.end();
+      } else {
+        // File found, serve the file
+        fs.readFile(filePath, (err, data) => {
+          if (err) {
+            console.error(err);
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.write("Internal Server Error");
+            res.end();
+          } else {
+            const contentType = getContentType(filePath); // Function to determine content type based on file extension
+            res.writeHead(200, { "Content-Type": contentType });
+            res.write(data);
+            res.end();
+          }
+        });
+      }
+    });
+  })
+  .listen(3000);
+
+function getContentType(filePath) {
+  const extname = path.extname(filePath);
+  switch (extname) {
+    case ".html":
+      return "text/html";
+    case ".css":
+      return "text/css";
+    case ".js":
+      return "text/javascript";
+    // Add more cases for other file types as needed
+    default:
+      return "text/plain";
+  }
+}
+```
+
+**Explanation:**
+
+1. We require the `http` and `path` modules.
+2. We define a function `getContentType` to determine the appropriate content type based on the file extension.
+3. In the server callback, we construct the file path based on the requested URL.
+4. We use `fs.access` to check if the file exists.
+5. If the file exists, we read its content using `fs.readFile`.
+6. Upon successful read, we determine the content type using the `getContentType` function and set the appropriate header.
+7. We send the file data as the response body.
+8. Error handling is added for both file access and reading errors, sending appropriate error responses.
+
+This example demonstrates basic static file serving. You can extend this functionality to handle different file types, implement caching mechanisms, and explore more advanced serving techniques.
+
+## 4. Building APIs: Exposing Functionality
+
+**APIs (Application Programming Interfaces)** allow other applications to interact with your server programmatically. Node.js excels in building RESTful APIs, which adhere to a specific set of architectural principles.
+
+**Example: Creating a Simple API Endpoint:**
+
+```javascript
+http
+  .createServer((req, res) => {
+    if (req.url === "/api/users" && req.method === "GET") {
+      const users = [{ name: "Alice" }, { name: "Bob" }];
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.write(JSON.stringify(users));
+      res.end();
+    } else {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.write("404 Not Found");
+      res.end();
+    }
+  })
+  .listen(3000);
+```
+
+**Explanation:**
+
+1. We check if the request is a GET request to the `/api/users` endpoint.
+2. If the request matches, we create a dummy user list and send it as a JSON response with the appropriate content type.
+3. Otherwise, we send a 404 Not Found response.
+
+This is a basic example, and building full-fledged APIs involves handling various HTTP methods (POST, PUT, DELETE), data parsing (e.g., JSON parsing for request bodies), and implementing robust error handling and authentication mechanisms.
+
+By understanding the concepts of creating HTTP servers, handling requests and responses, serving static files, and building simple APIs, you can lay a solid foundation for developing web applications and services using Node.js. Remember, this is just the beginning. Explore further by building more complex applications, utilizing frameworks like Express.js, and delving deeper into advanced web development techniques with Node.js!
