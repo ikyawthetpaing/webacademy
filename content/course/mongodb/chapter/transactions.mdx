@@ -1,0 +1,175 @@
+---
+index: 10
+title: "MongoDB Transactions"
+---
+
+In the realm of data manipulation, ensuring consistency is paramount. Transactions, a fundamental database concept, play a crucial role in guaranteeing the atomicity (all-or-nothing execution) and isolation (visibility of changes only after successful completion) of data operations. This chapter delves into the world of MongoDB transactions, exploring their functionalities, support within replica sets and sharded clusters, and how they empower you to maintain data consistency within your applications.
+
+## 1. The Power of Guarantees: Introduction to Transactions in MongoDB
+
+Traditionally, database systems rely on ACID (Atomicity, Consistency, Isolation, Durability) properties to ensure data integrity. Transactions embody the concept of atomicity, guaranteeing that a sequence of operations on your data is treated as a single unit.
+
+**a) All-or-Nothing Execution:**
+
+Imagine transferring funds between two bank accounts. A transaction ensures that either both accounts are updated successfully (debiting one and crediting the other) or neither is modified, preventing partial updates that could leave your data in an inconsistent state.
+
+**b) Transactions in MongoDB:**
+
+MongoDB introduced multi-document transactions with version 4.0, enabling you to perform operations on multiple documents across a single or multiple collections and guarantee their atomicity.
+
+**Remember:**
+
+- Transactions offer a powerful mechanism for maintaining data consistency, particularly when dealing with complex data updates that involve multiple documents.
+
+## 2. Where Transactions Thrive: Transaction Support in Replica Sets and Sharded Clusters
+
+MongoDB offers transaction support within replica sets and sharded clusters, catering to various deployment scenarios:
+
+**a) Replica Sets:**
+
+- A replica set is a group of MongoDB servers where one server serves as the primary and the others act as secondaries.
+- Transactions are supported within a replica set on the primary server.
+- Operations within a transaction are replicated to the secondary servers once the transaction commits on the primary.
+
+**b) Sharded Clusters:**
+
+- A sharded cluster horizontally scales your data across multiple shards (sharding servers) for improved performance with large datasets.
+- MongoDB 4.2 introduced distributed transactions, allowing you to perform transactions across multiple shards within a sharded cluster.
+
+**c) Important Considerations:**
+
+- Transactions can impact performance due to the additional locking mechanisms involved.
+- Evaluate the trade-off between data consistency and performance requirements when deciding whether to use transactions in your application.
+
+**Remember:**
+
+- Understanding your deployment type (replica set or sharded cluster) is crucial for determining the appropriate transaction support available in your MongoDB environment.
+
+## 3. Putting It into Action: Using Transactions for Data Consistency
+
+Let's explore how to leverage transactions in MongoDB to ensure data consistency:
+
+**a) Enabling Transactions:**
+
+Transactions are not enabled by default. You can enable them at the database level using the `setFeatureCompatibilityVersion` command:
+
+```javascript
+db.adminCommand({ setFeatureCompatibilityVersion: "4.0" });
+```
+
+**b) Initiating a Transaction:**
+
+You can start a transaction using a session object:
+
+```javascript
+const session = db.startSession({ isolationLevel: "snapshot" }); // Specify isolation level
+session.startTransaction();
+```
+
+**c) Performing Operations within the Transaction:**
+
+Within the transaction, you can execute your desired operations on documents across collections:
+
+```javascript
+// Update document in collection "products"
+db.products.updateOne({ _id: productId }, { $set: { inStock: false } }, { session });
+
+// Insert document into collection "orders"
+db.orders.insertOne({ customerId: userId, items: [...], session });
+```
+
+**d) Committing or Aborting the Transaction:**
+
+Once all operations within the transaction are complete, you can either commit or abort the entire transaction:
+
+```javascript
+try {
+  session.commitTransaction();
+  console.log("Transaction committed successfully");
+} catch (error) {
+  session.abortTransaction();
+  console.error("Transaction aborted:", error);
+} finally {
+  session.endSession(); // Always end the session
+}
+```
+
+**Explanation:**
+
+1. We start a session with the `isolationLevel` set to `snapshot` (a common option).
+2. Inside the transaction, we perform an update on the `products` collection and an insert on the `orders` collection.
+3. The `try...catch...finally` block ensures proper handling of the transaction's outcome.
+   - If successful, `commitTransaction()` finalizes the changes.
+   - In case of errors, `abortTransaction()` rolls back all changes within the transaction.
+   - Finally, the session is ended with `endSession()`.
+
+**Remember:**
+
+- Always enclose your transaction operations within a `try...catch...finally` block to ensure proper error handling and data consistency.
+- Consider the isolation level (e.g., `snapshot`, `readCommitted`) when starting a transaction. It defines the visibility of changes made within the transaction to other sessions.
+
+**e) Example Scenario: Transferring Funds with Transactions:**
+
+Imagine a banking application where you need to transfer funds between two accounts atomically. Here's how transactions can ensure consistency:
+
+```javascript
+const session = db.startSession({ isolationLevel: "snapshot" });
+session.startTransaction();
+
+try {
+  const fromAccount = db.accounts.findOne(
+    { accountNumber: "A123" },
+    { session }
+  );
+  const toAccount = db.accounts.findOne({ accountNumber: "B456" }, { session });
+
+  if (fromAccount.balance >= transferAmount) {
+    db.accounts.updateOne(
+      { _id: fromAccount._id },
+      { $inc: { balance: -transferAmount } },
+      { session }
+    );
+    db.accounts.updateOne(
+      { _id: toAccount._id },
+      { $inc: { balance: transferAmount } },
+      { session }
+    );
+    session.commitTransaction();
+    console.log("Funds transfer successful!");
+  } else {
+    console.error("Insufficient funds in source account.");
+  }
+} catch (error) {
+  session.abortTransaction();
+  console.error("Transaction failed:", error);
+} finally {
+  session.endSession();
+}
+```
+
+**Explanation:**
+
+1. The transaction ensures that either both accounts are updated (debiting one and crediting the other) or neither is modified.
+2. We first check if the source account has sufficient funds within the transaction to avoid partial updates.
+3. If the transfer is successful, the transaction commits, updating both accounts atomically. Otherwise, it aborts, preventing any data inconsistencies.
+
+**Remember:**
+
+- Transactions offer a robust mechanism for ensuring data consistency in scenarios involving updates to multiple documents.
+- Evaluate the need for transactions based on your application's requirements and the potential performance impact.
+
+## Conclusion: Maintaining Data Harmony
+
+By understanding the concepts of transactions in MongoDB, their support within replica sets and sharded clusters, and practical examples of using them for data consistency, you've equipped yourself with a powerful tool to safeguard your data integrity. Remember:
+
+- Leverage transactions strategically for operations that require strict atomicity and consistency guarantees.
+- Consider alternative approaches like optimistic locking for scenarios where eventual consistency may suffice to improve performance.
+- Continuously monitor your application's performance and data access patterns to determine the optimal balance between consistency and performance in your MongoDB deployments.
+
+As you progress, explore:
+
+- Advanced transaction concepts like retryable writes and read concern to fine-tune transaction behavior.
+- Techniques for handling potential deadlocks that can arise in certain transaction scenarios.
+- Best practices for designing your application logic to leverage transactions effectively.
+
+By incorporating these advanced concepts, you'll be well-positioned to build robust applications that maintain data consistency and integrity within your MongoDB deployments.
