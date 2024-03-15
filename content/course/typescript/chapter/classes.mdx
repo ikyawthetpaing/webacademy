@@ -1,0 +1,231 @@
+---
+index: 6
+title: "TypeScript Classes"
+---
+
+Welcome, intrepid TypeScript explorers! This chapter delves into the exciting realm of classes, the fundamental building blocks of object-oriented programming. We'll explore how to create classes in TypeScript, leverage inheritance for code reusability, and implement interfaces to define object contracts. Buckle up and get ready to craft powerful and reusable objects using classes in TypeScript!
+
+## 1. The Class Advantage: Object Blueprints with Behavior
+
+Imagine crafting a blueprint for a car that not only defines its structure (wheels, engine) but also its functionality (accelerate, brake) – classes in TypeScript function similarly. They act as blueprints that encapsulate both the properties (data) and methods (behavior) of an object.
+
+**Creating Classes:**
+
+The `class` keyword is used to define classes in TypeScript:
+
+```typescript
+class Car {
+  make: string;
+  model: string;
+  year: number;
+
+  constructor(make: string, model: string, year: number) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+
+  accelerate(): void {
+    console.log("Car is accelerating!");
+  }
+
+  brake(): void {
+    console.log("Car is braking!");
+  }
+}
+
+let myCar = new Car("Toyota", "Camry", 2023);
+myCar.accelerate(); // Output: Car is accelerating!
+myCar.brake(); // Output: Car is braking!
+
+console.log(
+  `Car details: Make: ${myCar.make}, Model: ${myCar.model}, Year: ${myCar.year}`
+); // Output: Car details: Make: Toyota, Model: Camry, Year: 2023
+```
+
+**Remember:**
+
+- Classes encapsulate both data (properties) and behavior (methods) within a single unit.
+- The `constructor` method is a special function that is called when a new object (instance) of the class is created. It's used to initialize the object's properties.
+
+## 2. Unveiling Inheritance: Reusing Code with Class Hierarchies
+
+Imagine building a blueprint for a sports car that inherits functionalities from a general car blueprint – inheritance in TypeScript allows for code reusability:
+
+```typescript
+class SportsCar extends Car {
+  // SportsCar inherits from Car class
+  horsepower: number;
+
+  constructor(make: string, model: string, year: number, horsepower: number) {
+    super(make, model, year); // Call the parent class constructor with required arguments
+    this.horsepower = horsepower;
+  }
+
+  accelerate(): void {
+    // Override the accelerate method for a sportier behavior
+    super.accelerate(); // Call the parent class accelerate method
+    console.log("Sports car is accelerating with extra power!");
+  }
+}
+
+let mySportsCar = new SportsCar("Porsche", "911", 2024, 400);
+mySportsCar.accelerate(); // Output: Car is accelerating! (from parent class)
+// Output: Sports car is accelerating with extra power!
+
+console.log(
+  `Sports car details: Make: ${mySportsCar.make}, Model: ${mySportsCar.model}, Year: ${mySportsCar.year}, Horsepower: ${mySportsCar.horsepower}`
+); // Output: Sports car details: ... (including inherited and specific properties)
+```
+
+**Remember:**
+
+- Inheritance allows you to create new classes (subclasses) that inherit properties and methods from existing classes (parent classes).
+- This promotes code reusability and reduces code duplication.
+
+## 3. Access Modifiers: Controlling Property and Method Visibility
+
+Imagine a blueprint with sections marked as private (engine details) or public (car model) – access modifiers in TypeScript control property and method visibility:
+
+```typescript
+class Animal {
+  private species: string; // Private property (accessible only within the Animal class)
+  public name: string; // Public property (accessible anywhere)
+
+  constructor(name: string, species: string) {
+    this.name = name;
+    this.species = species;
+  }
+
+  public getSpecies(): string {
+    // Public method to access private property
+    return this.species;
+  }
+}
+
+let lion = new Animal("Simba", "Lion");
+// console.log(lion.species); // This will cause a compilation error because 'species' is private
+
+console.log(lion.getSpecies()); // Output: Lion (using public method to access private property)
+```
+
+**Common Access Modifiers:**
+
+- **`public`:** Accessible from anywhere in the code.
+- **`private`:** Accessible only within the class where it's defined.
+- **`protected`:** Accessible from the class itself and its subclasses (useful for inheritance scenarios).
+
+**Remember:**
+
+- Access modifiers provide control over data encapsulation and promote better object design principles.
+
+## 4. Unveiling the Mystery: Implementing Interfaces with Classes
+
+Imagine a blueprint adhering to specific building regulations defined in a separate document – interfaces and classes in TypeScript work together:
+
+```typescript
+interface Shape {
+  area(): number;
+}
+
+class Square implements Shape {
+  sideLength: number;
+
+  constructor(sideLength: number) {
+    this.sideLength = sideLength;
+  }
+
+  area(): number {
+    return this.sideLength * this.sideLength;
+  }
+}
+
+let square = new Square(5);
+console.log(square.area()); // Output: 25 (calculating area)
+```
+
+**Remember:**
+
+- Classes can implement interfaces, ensuring that objects created from the class adhere to the interface's contract (properties and methods).
+- This promotes type safety and code clarity.
+
+## 5. Code Example: Utilizing Classes and Inheritance (Animal Shelter)
+
+Let's build a simple animal shelter example to illustrate classes and inheritance in action:
+
+```typescript
+class Animal {
+  private name: string;
+  private species: string;
+
+  constructor(name: string, species: string) {
+    this.name = name;
+    this.species = species;
+  }
+
+  public makeSound(): void {
+    console.log("Generic animal sound!"); // Placeholder sound for base class
+  }
+}
+
+class Dog extends Animal {
+  // Dog inherits from Animal class
+  constructor(name: string) {
+    super("Unknown", "Dog"); // Call parent class constructor with default values for name and species (can be overridden)
+    this.name = name;
+  }
+
+  public makeSound(): void {
+    super.makeSound(); // Call parent class makeSound method
+    console.log("Woof!");
+  }
+}
+
+class Cat extends Animal {
+  // Cat inherits from Animal class
+  constructor(name: string) {
+    super(name, "Cat"); // Call parent class constructor with arguments
+  }
+
+  public makeSound(): void {
+    super.makeSound(); // Call parent class makeSound method
+    console.log("Meow!");
+  }
+}
+
+let dog1 = new Dog("Buddy");
+dog1.makeSound(); // Output: Generic animal sound! (from parent class)
+// Output: Woof!
+
+let cat1 = new Cat("Whiskers");
+cat1.makeSound(); // Output: Generic animal sound! (from parent class)
+// Output: Meow!
+```
+
+**Explanation:**
+
+1. We define an `Animal` class with private properties and a generic `makeSound` method.
+2. The `Dog` and `Cat` classes inherit from `Animal`, specializing the behavior by overriding the `makeSound` method and providing constructors with specific arguments.
+3. This showcases how inheritance promotes code reuse and allows for creating subclasses with specialized functionalities.
+
+**Remember:**
+
+- Classes and inheritance are fundamental concepts in object-oriented programming, enabling you to create complex and well-structured object hierarchies in TypeScript.
+
+## Conclusion: Mastering Object Blueprints in Motion
+
+By understanding class creation, inheritance with access modifiers, and implementing interfaces with classes, you've equipped yourself with the essential tools for building robust and reusable object-oriented code in TypeScript. This empowers you to design well-structured and maintainable applications. As you progress, explore advanced topics like static members, abstract classes, and generics for even more powerful class-based programming in TypeScript.
+
+**Remember:**
+
+- Mastering classes is a cornerstone of becoming a proficient TypeScript developer.
+
+## Additional Resources
+
+Here are some resources for further exploration:
+
+- [TypeScript Handbook - Classes](https://www.typescriptlang.org/docs/handbook/classes.html)
+- [Learn TypeScript - Classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
+- [TypeScript Deep Dive Book - Classes](https://basarat.gitbook.io/typescript/)
+
+By incorporating these advanced concepts and leveraging the provided resources, you'll be well-equipped to design and implement robust classes for your TypeScript projects. Happy coding!

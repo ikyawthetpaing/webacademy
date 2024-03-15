@@ -1,0 +1,155 @@
+---
+index: 1
+title: "TypeScript Basic Types"
+---
+
+Welcome to the realm of TypeScript, where clarity and control reign supreme! This chapter delves into the foundation of TypeScript - its basic types. We'll explore primitive types like numbers, strings, and booleans, understand type inference, and empower you to explicitly define types using annotations. Buckle up, and get ready to unlock the power of typed data!
+
+## 1. The Building Blocks: Primitive Types
+
+Imagine building a majestic castle - you wouldn't use random materials, right? Similarly, TypeScript uses primitive types as the fundamental building blocks for your variables and function arguments. Let's explore the essential trio:
+
+**a) Numbers (`number`):** Represent numerical values, including integers, decimals, and scientific notation.
+
+```typescript
+let age: number = 30;
+let pi: number = 3.14159;
+let largeNumber: number = 1.23e10; // Exponential notation
+```
+
+**b) Strings (`string`):** Represent sequences of characters, typically enclosed in single (`''`) or double quotes (`""`).
+
+```typescript
+let name: string = "John Doe";
+let greeting: string = "Hello, world!";
+let multilineString: string = `This is a
+multiline string.`; // Backticks allow for multiline strings
+```
+
+**c) Booleans (`boolean`):** Represent logical values, either `true` or `false`.
+
+```typescript
+let isLoggedIn: boolean = true;
+let hasAccess: boolean = false;
+```
+
+**Remember:**
+
+- Primitive types are fundamental data types that cannot be further decomposed.
+- TypeScript ensures type safety, preventing you from accidentally assigning a string value to a variable declared as a number.
+
+## 2. Unveiling the Mystery: Type Inference
+
+TypeScript is an intelligent language! Often, it can infer the type of your variable based on the value you assign to it. This is known as type inference.
+
+```typescript
+let age = 30; // Inferred type: number
+let message = "Hello"; // Inferred type: string
+let isActive = true; // Inferred type: boolean
+```
+
+**Remember:**
+
+- Type inference is a convenient feature, but it's not foolproof. Explicitly defining types can enhance code clarity and maintainability.
+
+## 3. Taking Control: Explicit Type Annotations
+
+While type inference is helpful, you can explicitly define the type of your variables and function arguments using type annotations. This adds an extra layer of control and clarity to your code.
+
+```typescript
+let age: number = 30; // Explicitly defining type as number
+let message: string = "Hello"; // Explicitly defining type as string
+let isActive: boolean = true; // Explicitly defining type as boolean
+```
+
+**Enhancing Function Parameters and Return Types:**
+
+Type annotations extend to function parameters and return types as well.
+
+```typescript
+function greet(name: string): string {
+  // Parameter with type annotation (string) and return type annotation (string)
+  return "Hello, " + name;
+}
+
+let greeting = greet("Alice");
+console.log(greeting); // Output: Hello, Alice
+```
+
+**Remember:**
+
+- Explicit type annotations can improve code readability and maintainability by making type expectations clear for yourself and other developers.
+
+## 4. Beyond the Basics: Advanced Type Annotations
+
+As you delve deeper into TypeScript, explore these advanced type annotations:
+
+- **Union Types:** Combine multiple types using the pipe (`|`) symbol to indicate a variable can hold one of those specific types.
+
+```typescript
+let userId: string | number; // userId can be either a string or a number
+userId = "user123";
+userId = 1001;
+```
+
+- **Arrays:** Annotate arrays with square brackets (`[]`) and specify the type of elements within the array.
+
+```typescript
+let colors: string[] = ["red", "green", "blue"]; // Array of strings
+let numbers: number[] = [1, 2, 3]; // Array of numbers
+```
+
+**Remember:**
+
+- These advanced annotations offer greater flexibility and control over data types in your TypeScript code.
+
+## 5. Code Example: Utilizing Type Annotations (Payroll System)
+
+Let's build a simple payroll system example to illustrate type annotations in action:
+
+```typescript
+function calculateSalary(hoursWorked: number, hourlyRate: number): number {
+  if (typeof hoursWorked !== "number" || typeof hourlyRate !== "number") {
+    throw new Error("Invalid input types. Hours and rate must be numbers!");
+  }
+  return hoursWorked * hourlyRate;
+}
+
+let employee1Salary = calculateSalary(40, 25); // Valid input (number, number)
+console.log(employee1Salary); // Output: 1000 (40 hours * $25/hour)
+
+// Error handling for invalid input types
+try {
+  let employee2Salary = calculateSalary("20", 30); // Invalid input (string, number)
+} catch (error) {
+  console.error(error.message); // Output: Error: Invalid input types. Hours and rate must be numbers!
+}
+```
+
+**Explanation:**
+
+1. The `calculateSalary` function takes two parameters: `hoursWorked` and `hourlyRate`, both explicitly annotated with the `number` type.
+2. The function also includes a type guard (`typeof hoursWorked !== "number"`) to check for invalid input types (non-numbers) and throws an error if encountered.
+3. We call the function with valid and invalid inputs, demonstrating type safety and error handling capabilities.
+
+**Remember:**
+
+- Type annotations not only enhance code clarity but also act as safeguards against potential runtime errors by ensuring data types are as expected.
+
+## Conclusion: Building a Foundation with Strong Types
+
+By understanding primitive types, type inference, and explicit type annotations, you've laid a solid foundation for working with data in TypeScript. This empowers you to write more robust, maintainable, and predictable code. As you progress, explore advanced type annotations like union types and arrays to further refine your data handling capabilities in TypeScript.
+
+**Remember:**
+
+- Mastering basic types is the first step in your TypeScript journey. Embrace the power of types, experiment with code, and leverage the vast resources available to become a proficient TypeScript developer.
+
+## Additional Resources
+
+Here are some resources for further exploration:
+
+- [TypeScript Handbook - Basic Types](https://www.typescriptlang.org/docs/handbook/basic-types.html)
+- [Learn TypeScript - Basic Types](https://www.freecodecamp.org/news/learn-typescript-beginners-guide/)
+- [TypeScript Deep Dive Book - Primitive Types](https://basarat.gitbook.io/typescript/)
+
+By incorporating these advanced concepts and leveraging the provided resources, you'll be well-equipped to define and manage data effectively using TypeScript's type system, building a strong foundation for your future TypeScript projects. Happy coding!
