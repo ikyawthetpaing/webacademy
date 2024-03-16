@@ -1,0 +1,223 @@
+---
+index: 10
+title: "TypeScript Advanced Types"
+---
+
+Welcome, TypeScript adventurers! This chapter delves into the world of advanced types in TypeScript, offering you a versatile toolbox for crafting more expressive and robust type systems. We'll explore union types, intersection types, type guards, type aliases, and type manipulation techniques. Buckle up and get ready to unlock the full potential of TypeScript's type system!
+
+## 1. The Power of Choice: Union Types and Intersection Types
+
+Imagine a toolbox with compartments that can hold different tools (wrenches, screwdrivers) or a combination of them – union and intersection types in TypeScript provide similar functionality:
+
+**Union Types:**
+
+- Union types allow you to specify that a variable can hold one of several types:
+
+```typescript
+function getValue(value: string | number): string | number {
+  if (typeof value === "string") {
+    return value.toUpperCase();
+  } else {
+    return value * 2;
+  }
+}
+
+let convertedValue = getValue(10);
+console.log(convertedValue); // Output: 20 (number multiplication)
+
+convertedValue = getValue("Hello");
+console.log(convertedValue); // Output: HELLO (string uppercasing)
+```
+
+**Remember:**
+
+- Union types are denoted using the pipe symbol (`|`).
+- This allows you to handle different types of values within a single function or variable declaration.
+
+**Intersection Types:**
+
+- Imagine combining compartments from different toolboxes – intersection types allow you to combine multiple types:
+
+```typescript
+interface User {
+  name: string;
+}
+
+interface Admin extends User {
+  permissions: string[];
+}
+
+let user: User = { name: "Alice" };
+let admin: Admin = { name: "Bob", permissions: ["read", "write"] };
+
+function greetUser(user: User & { age: number }): void {
+  // Intersection with an anonymous type
+  console.log(`Hello, ${user.name}! (Age: ${user.age})`);
+}
+
+greetUser({ name: "Charlie", age: 30 }); // Intersection with an object literal
+```
+
+**Remember:**
+
+- Intersection types combine multiple types using the ampersand symbol (`&`).
+- This allows you to define objects that share properties from multiple interfaces.
+
+## 2. Unveiling the Mystery: Type Guards and Type Predicates
+
+Imagine having a tool inspector in your toolbox to identify specific tool types – type guards in TypeScript function similarly:
+
+```typescript
+function isString(value: any): value is string {
+  return typeof value === "string";
+}
+
+function printFormattedValue(value: string | number): void {
+  if (isString(value)) {
+    console.log(value.toUpperCase());
+  } else {
+    console.log(value.toFixed(2)); // Assuming number has a toFixed method
+  }
+}
+
+printFormattedValue("Hello World!"); // Output: HELLO WORLD!
+printFormattedValue(10.5); // Output: 10.50 (assuming toFixed exists for numbers)
+```
+
+**Remember:**
+
+- Type guards are functions that return a boolean and perform a type check.
+- They allow you to narrow down the type of a variable within an `if` statement, providing more type safety and code clarity.
+
+## 3. Unveiling the Magic: Type Aliases and Type Manipulation
+
+Imagine creating custom labels for your tools in the toolbox – type aliases in TypeScript offer similar functionality:
+
+```typescript
+type UserId = string | number; // Custom type alias for user ID
+
+interface User {
+  id: UserId;
+  name: string;
+}
+
+let user1: User = { id: "123", name: "Alice" };
+let user2: User = { id: 456, name: "Bob" };
+```
+
+**Remember:**
+
+- Type aliases create new names for existing types, improving code readability and maintainability.
+- They are particularly useful when you have complex types that are used frequently.
+
+**Type Manipulation:**
+
+- TypeScript offers advanced techniques for manipulating types:
+
+```typescript
+type PartialUser = Partial<User>; // Partial type (optional properties)
+
+let partialUser: PartialUser = { name: "Charlie" }; // Only 'name' property provided
+
+type ReadonlyUser = Readonly<User>; // Readonly type (properties cannot be changed)
+
+let readonlyUser: ReadonlyUser = { id: "789", name: "David" };
+// readonlyUser.id = "newId"; // This will cause a compilation error (cannot modify readonly property)
+```
+
+**Remember:**
+
+- Built-in utility types like `Partial` and `Readonly` allow you to modify existing types for specific use cases.
+- Imagine creating a new set of tools based on an existing set – mapped types in TypeScript offer similar functionality:
+
+```typescript
+interface User {
+  name: string;
+  age: number;
+}
+
+type UserWithId<T extends User> = { id: string } & T; // Mapped type with added 'id' property
+
+let userWithId1: UserWithId<User> = { id: "100", name: "Alice", age: 30 };
+let userWithId2: UserWithId<{ profession: string }> = {
+  id: "200",
+  name: "Bob",
+  age: 25,
+  profession: "Developer",
+}; // Extending the base User type
+```
+
+**Remember:**
+
+- Mapped types allow you to create new types by transforming existing types.
+- This can be useful for adding or removing properties from existing types.
+
+## 4. Code Example: Utilizing Advanced Types (Authentication)
+
+Let's build a simple authentication example to illustrate advanced types in action:
+
+```typescript
+type LoginCredentials = {
+  username: string;
+  password: string;
+};
+
+type UserData = {
+  id: number;
+  name: string;
+  // Other user data properties
+};
+
+function authenticate(credentials: LoginCredentials): UserData | null {
+  // Simulate authentication logic (replace with actual authentication mechanism)
+  const users = [
+    { id: 1, name: "Alice" },
+    { id: 2, name: "Bob" },
+  ];
+
+  let authenticatedUser = users.find(
+    (user) =>
+      user.name === credentials.username &&
+      user.password === credentials.password
+  );
+
+  return authenticatedUser || null;
+}
+
+let user = authenticate({ username: "Alice", password: "secret" });
+
+if (user) {
+  console.log(`Welcome back, ${user.name} (ID: ${user.id})`); // Access user properties using type safety
+} else {
+  console.log("Invalid username or password!");
+}
+```
+
+**Explanation:**
+
+1. We define `LoginCredentials` and `UserData` types for authentication data.
+2. The `authenticate` function uses a union type to represent the return value (either `UserData` or `null`).
+3. We leverage type guards (`user && typeof user !== 'null'`) to ensure type safety when accessing user properties after successful authentication.
+
+**Remember:**
+
+- Advanced types empower you to create robust and type-safe components for various functionalities in your TypeScript projects.
+
+## Conclusion: Mastering the Advanced Type Toolbox
+
+By understanding union types, intersection types, type guards, type aliases, and type manipulation techniques, you've unlocked the power of advanced types in TypeScript. This enables you to design more expressive, reusable, and type-safe components. As you progress, explore even more advanced topics like discriminated unions, index types, and conditional types to further refine your type-safety skills in TypeScript.
+
+**Remember:**
+
+- Mastering advanced types is a crucial step towards becoming a proficient TypeScript developer.
+- Leverage these concepts to write clean, maintainable, and type-safe code for your TypeScript projects.
+
+## Additional Resources
+
+Here are some resources for further exploration:
+
+- [TypeScript Handbook - Advanced Types](https://www.typescriptlang.org/docs/handbook/)
+- [Learn TypeScript - Advanced Types](https://basarat.gitbook.io/typescript/)
+- [TypeScript Deep Dive Book - Advanced Types](https://basarat.gitbook.io/typescript/)
+
+By incorporating these advanced concepts and leveraging the provided resources, you'll be well-equipped to design and implement robust type systems for your TypeScript projects. Happy coding!

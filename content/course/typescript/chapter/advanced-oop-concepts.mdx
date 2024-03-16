@@ -1,0 +1,297 @@
+---
+index: 12
+title: "TypeScript Advanced OOP Concepts"
+---
+
+Welcome, TypeScript enthusiasts! This chapter dives into the realm of advanced object-oriented programming (OOP) concepts in TypeScript. We'll explore abstract classes and methods, mixins, private constructors, and readonly properties, equipping you with tools to design more flexible and robust class structures. Buckle up and get ready to refine your TypeScript OOP skills!
+
+## 1. The Power of Abstraction: Abstract Classes and Methods
+
+Imagine a blueprint for a building foundation that specifies essential elements but leaves room for customization – abstract classes in TypeScript function similarly:
+
+**Abstract Classes:**
+
+- Abstract classes define a blueprint for a class that cannot be instantiated directly.
+- They serve as a base class for other classes to inherit from.
+- They can contain abstract methods that must be implemented by derived classes.
+
+```typescript
+abstract class Shape {
+  abstract getArea(): number; // Abstract method (no implementation)
+
+  toString(): string {
+    return `Shape (area: ${this.getArea()})`; // Default implementation
+  }
+}
+
+class Rectangle extends Shape {
+  private width: number;
+  private height: number;
+
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+  }
+
+  getArea(): number {
+    return this.width * this.height;
+  }
+}
+
+class Circle extends Shape {
+  private radius: number;
+
+  constructor(radius: number) {
+    this.radius = radius;
+  }
+
+  getArea(): number {
+    return Math.PI * Math.pow(this.radius, 2);
+  }
+}
+
+let rectangle = new Rectangle(5, 10);
+console.log(rectangle.toString()); // Output: Shape (area: 50)
+
+let circle = new Circle(3);
+console.log(circle.toString()); // Output: Shape (area: 28.279999999999997) (assuming Math.PI is used)
+```
+
+**Remember:**
+
+- Abstract classes enforce a contract by defining required methods that derived classes must implement.
+- This promotes code consistency and ensures that derived classes provide the necessary functionality.
+
+## 2. Unveiling the Mixin Magic: Mixins in TypeScript
+
+Imagine building blocks for adding functionalities to different classes – mixins in TypeScript offer similar functionality:
+
+**Mixins:**
+
+- Mixins are utility classes that contain reusable functionalities.
+- They cannot be instantiated directly but can be mixed into other classes using interfaces.
+
+```typescript
+interface Loggable {
+  log(message: string): void;
+}
+
+class Logger implements Loggable {
+  log(message: string): void {
+    console.log(`[${new Date().toISOString()}] ${message}`);
+  }
+}
+
+class Product {
+  name: string;
+  price: number;
+
+  constructor(name: string, price: number) {
+    this.name = name;
+    this.price = price;
+  }
+}
+
+class ProductService extends Product implements Loggable {
+  constructor(name: string, price: number) {
+    super(name, price);
+  }
+
+  logProductInfo(): void {
+    this.log(`Product: ${this.name}, Price: ${this.price}`); // Using the mixed-in 'log' method
+  }
+}
+
+const mixinLogger = new Logger(); // Mixin cannot be instantiated directly
+const productService = new ProductService("T-Shirt", 20);
+productService.logProductInfo(); // Output: [Current Date and Time] Product: T-Shirt, Price: 20
+```
+
+**Remember:**
+
+- Mixins promote code reusability by encapsulating common functionalities that can be shared across various classes.
+- Interfaces are used to define the contract (e.g., `Loggable`) that mixins must implement.
+
+## 3. Unveiling the Mystery: Using Private Constructors and Readonly Properties
+
+Imagine a building with a restricted entrance and unchangeable foundation – private constructors and readonly properties in TypeScript offer similar functionality:
+
+**Private Constructors:**
+
+- Private constructors prevent a class from being instantiated directly outside of its containing class.
+- This can be useful for singletons or factory patterns.
+
+```typescript
+class Database {
+  private static instance: Database; // Private static property to hold the singleton instance
+
+  private constructor() {} // Private constructor
+
+  public static getInstance(): Database {
+    if (!Database.instance) {
+      Database.instance = new Database();
+    }
+    return Database.instance;
+  }
+
+  // Database connection logic
+}
+
+// Attempting to directly create an instance will cause a compilation error
+
+let database = Database.getInstance(); // Singleton access
+```
+
+**Remember:**
+
+- Private constructors enforce controlled instantiation, often used for singletons or factory patterns.
+
+**Readonly Properties:**
+
+- Readonly properties are properties that can only be assigned a value during initialization or within the constructor.
+- They cannot be modified after that.
+
+```typescript
+class User {
+  readonly id: number;
+  name: string;
+
+  constructor(id: number, name: string) {
+    this.id = id;
+    this.name = name;
+  }
+
+  // Attempting to modify 'id' after initialization will cause a compilation error
+  // this.id = 100;
+}
+
+let user = new User(123, "Alice");
+console.log(user.id); // Output: 123 (read-only value)
+```
+
+**Remember:**
+
+- Readonly properties protect data integrity by preventing accidental modifications after initialization.
+
+## 4. Code Example: Utilizing Advanced OOP Concepts (Authentication Service)
+
+Let's build a simple authentication service example that incorporates advanced OOP concepts:
+
+```typescript
+abstract class AuthenticationService {
+  abstract login(username: string, password: string): boolean;
+
+  abstract getUserInfo(): User | null; // May return null if not logged in
+}
+
+class DatabaseAuthService extends AuthenticationService {
+  private users: { [key: string]: User } = {}; // User store (simulated)
+
+  constructor() {
+    this.users = {
+      admin: { id: 1, name: "Administrator", permissions: ["read", "write"] },
+      user: { id: 2, name: "John Doe" },
+    };
+  }
+
+  login(username: string, password: string): boolean {
+    const user = this.users[username];
+    if (user && user.password === password) {
+      return true;
+    }
+    return false;
+  }
+
+  getUserInfo(): User | null {
+    // Logic to retrieve logged-in user information from database (simulated)
+    return { id: 1, name: "Administrator", permissions: ["read", "write"] }; // Assuming successful login
+  }
+}
+
+class AuthService implements Loggable {
+  // Mixing in the Loggable functionality
+  private static instance: AuthService;
+  private authService: AuthenticationService;
+
+  private constructor(authService: AuthenticationService) {
+    this.authService = authService;
+  }
+
+  public static getInstance(authService: AuthenticationService): AuthService {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService(authService);
+    }
+    return AuthService.instance;
+  }
+
+  login(username: string, password: string): boolean {
+    const success = this.authService.login(username, password);
+    if (success) {
+      this.log(`User ${username} logged in successfully.`);
+    } else {
+      this.log(`Login failed for user ${username}.`);
+    }
+    return success;
+  }
+
+  getUserInfo(): User | null {
+    return this.authService.getUserInfo();
+  }
+
+  log(message: string): void {
+    console.log(`[${new Date().toISOString()}] ${message}`);
+  }
+}
+
+const databaseAuthService = new DatabaseAuthService();
+const authService = AuthService.getInstance(databaseAuthService);
+
+const loggedIn = authService.login("admin", "secret");
+if (loggedIn) {
+  const userInfo = authService.getUserInfo();
+  console.log(`Welcome, ${userInfo?.name}! (ID: ${userInfo?.id})`); // Using optional chaining for safety
+}
+```
+
+**Explanation:**
+
+1. We define an abstract `AuthenticationService` class with abstract methods for login and user information retrieval.
+2. We implement a concrete `DatabaseAuthService` that extends the abstract class and provides specific logic for user authentication based on a simulated user store.
+3. We create an `AuthService` class as a singleton using private constructors and mix in the `Loggable` interface for logging functionalities.
+4. This example demonstrates the combined use of abstract classes, mixins, private constructors, and readonly properties for a more robust and maintainable authentication service implementation.
+
+**Remember:**
+
+- Advanced OOP concepts in TypeScript empower you to design flexible, reusable, and secure class structures for your applications.
+
+## Conclusion: Mastering the Art of Advanced OOP
+
+By understanding abstract classes and methods, mixins, private constructors, and readonly properties, you've unlocked a powerful toolkit for crafting well-structured and maintainable object-oriented code in TypeScript. Here's a summary of the key takeaways:
+
+- **Abstract classes and methods** enforce contracts and promote code consistency by defining a blueprint that derived classes must implement.
+- **Mixins** promote code reusability by encapsulating common functionalities that can be shared across various classes.
+- **Private constructors** control instantiation and are often used for singletons or factory patterns.
+- **Readonly properties** protect data integrity by preventing accidental modifications after initialization.
+
+As you progress, explore even more advanced topics like:
+
+- **Generics:** Create reusable components that work with different data types.
+- **Utility types:** Leverage built-in types like `Partial` and `Readonly` for type manipulation.
+- **Design patterns:** Utilize established patterns like Observer or Strategy for complex functionalities.
+
+By mastering these concepts and practicing them in your projects, you'll become a proficient TypeScript developer capable of designing robust and scalable object-oriented systems.
+
+**Remember:**
+
+- Advanced object-oriented programming in TypeScript empowers you to write cleaner, more maintainable, and more flexible code.
+- Continuously learning and exploring new concepts will further enhance your TypeScript skills.
+
+## Additional Resources
+
+Here are some resources for further exploration:
+
+- [TypeScript Documentation - Abstract Classes](https://www.tutorialsteacher.com/typescript/abstract-class)
+- [Learn TypeScript - Mixins](https://www.freecodecamp.org/news/programming-in-typescript/)
+- **Exploring TypeScript Book - Advanced OOP Concepts:** Consider exploring books like "Exploring TypeScript" by Boris Cherny or "Pro TypeScript" by Steve Fenton, which delve deeper into advanced OOP concepts in TypeScript.
+
+By leveraging these resources and practicing the concepts covered in this chapter, you'll solidify your understanding of advanced OOP in TypeScript and become an expert in crafting well-structured and maintainable object-oriented code. Happy coding!

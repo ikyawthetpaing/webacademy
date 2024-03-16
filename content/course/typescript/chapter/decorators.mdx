@@ -1,0 +1,270 @@
+---
+index: 11
+title: "TypeScript Decorators"
+---
+
+## Unveiling the Power of Metaprogramming: TypeScript Decorators
+
+Welcome, TypeScript enthusiasts! This chapter dives into the exciting realm of decorators, a powerful feature that allows you to add functionality to classes, properties, and methods at runtime. Decorators empower you to write concise and reusable code with enhanced modularity. Buckle up and get ready to explore the world of decorators in TypeScript!
+
+### 1. The Decorator Advantage: Metaprogramming Made Easy
+
+Imagine adding special tools to your existing toolbox to enhance its functionality – decorators in TypeScript function similarly. They allow you to define custom logic that modifies the behavior of classes, properties, and methods without directly altering their source code. This promotes code reusability, separation of concerns, and metaprogramming capabilities.
+
+**Understanding Decorators:**
+
+- Decorators are functions prefixed with the `@` symbol:
+
+```typescript
+function log(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+): PropertyDescriptor {
+  // Decorator logic to modify the property or method
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(`Method "${propertyKey}" called with arguments:`, args);
+    return originalMethod.apply(this, args);
+  };
+  return descriptor;
+}
+
+class User {
+  @log
+  greet(name: string): string {
+    return `Hello, ${name}!`;
+  }
+}
+
+let user = new User();
+user.greet("Alice"); // Output: Method "greet" called with arguments: ["Alice"]
+```
+
+**Remember:**
+
+- Decorators receive three arguments:
+  - `target`: The decorated class constructor (`any` for properties and methods).
+  - `propertyKey`: The name of the decorated property or method (string).
+  - `descriptor`: An object that describes the decorated property or method (used for modifying behavior).
+
+### 2. Unveiling the Mystery: Creating and Using Decorators
+
+Imagine crafting custom tools for your toolbox – creating decorators in TypeScript offers similar flexibility:
+
+**Class Decorators:**
+
+- Decorators can be applied to classes:
+
+```typescript
+function MyClassDecorator(param: string): ClassDecorator {
+  return (target: Function) => {
+    // Modify class behavior (e.g., add properties, methods)
+    target.prototype.version = param;
+  };
+}
+
+@MyClassDecorator("1.0.0")
+class MyClass {
+  // Class definition
+}
+
+console.log(new MyClass().version); // Output: 1.0.0 (added property)
+```
+
+**Property Decorators:**
+
+- Decorators can be applied to properties:
+
+```typescript
+function NonNegative(target: any, propertyKey: string): void {
+  // Modify property behavior (e.g., validation)
+  const originalSetter = Object.getOwnPropertyDescriptor(
+    target,
+    propertyKey
+  ).set;
+  Object.defineProperty(target, propertyKey, {
+    set(value: number) {
+      if (value < 0) {
+        throw new Error("Value cannot be negative!");
+      }
+      originalSetter.call(this, value);
+    },
+  });
+}
+
+class Account {
+  @NonNegative
+  balance: number = 0;
+}
+
+let account = new Account();
+account.balance = 100; // Valid assignment
+// account.balance = -50; // This will throw an error
+```
+
+**Method Decorators:**
+
+- Decorators can be applied to methods:
+
+```typescript
+function LogExecutionTime(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+): PropertyDescriptor {
+  // Modify method behavior (e.g., timing)
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    const startTime = performance.now();
+    const result = originalMethod.apply(this, args);
+    const endTime = performance.now();
+    console.log(
+      `Method "${propertyKey}" execution time: ${endTime - startTime} ms`
+    );
+    return result;
+  };
+  return descriptor;
+}
+
+class Math {
+  @LogExecutionTime
+  add(a: number, b: number): number {
+    return a + b;
+  }
+}
+
+let math = new Math();
+math.add(5, 3); // Output: Method "add" execution time: X ms (actual time measurement)
+```
+
+**Remember:**
+
+- You can create decorators for classes, properties, and methods, each offering specific functionalities.
+
+### 3. Unveiling the Magic: Decorator Composition
+
+Imagine combining multiple specialized tools from your toolbox for a complex task – decorator composition allows similar functionality:
+
+```typescript
+function withLogging(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+): PropertyDescriptor {
+  // Decorator logic to add logging
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(`Method "${propertyKey}" called with arguments:`, args);
+    return originalMethod.apply(this, args);
+  };
+  return descriptor;
+}
+
+function withTiming(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+): PropertyDescriptor {
+  // Decorator logic to add timing
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    const startTime = performance.now();
+    const result = originalMethod.apply(this, args);
+    const endTime = performance.now();
+    console.log(
+      `Method "${propertyKey}" execution time: ${endTime - startTime} ms`
+    );
+    return result;
+  };
+  return descriptor;
+}
+
+class Calculator {
+  @withLogging
+  @withTiming // Decorator composition (applied in reverse order)
+  add(a: number, b: number): number {
+    return a + b;
+  }
+}
+
+let calculator = new Calculator();
+calculator.add(10, 20); // Output: Method "add" called with arguments: [10, 20]  // Output: Method "add" execution time: X ms
+```
+
+**Explanation:**
+
+1. We define two decorators: `withLogging` and `withTiming`.
+2. We apply both decorators to the `add` method using decorator composition. Note that the order of decorators matters - they are applied in reverse order during execution (`withTiming` first, then `withLogging`).
+3. This allows us to combine the functionalities of both decorators, resulting in logging arguments and execution time for the `add` method call.
+
+**Remember:**
+
+- Decorator composition allows you to chain multiple decorators to achieve more complex behaviors.
+
+### 4. Code Example: Utilizing Decorators (Logging Service)
+
+Let's build a simple logging service example to illustrate decorators in action:
+
+```typescript
+class LogService {
+  static logMethodCall(
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
+    const originalMethod = descriptor.value;
+    descriptor.value = function (...args: any[]) {
+      console.log(
+        `[${LogService.getTimestamp()}] Method "${propertyKey}" called with arguments:`,
+        args
+      );
+      return originalMethod.apply(this, args);
+    };
+    return descriptor;
+  }
+
+  static getTimestamp(): string {
+    return new Date().toISOString();
+  }
+}
+
+class ProductService {
+  @LogService.logMethodCall
+  getProduct(id: number): Product | null {
+    // Logic to fetch product from database
+    return { id, name: "Product Name" };
+  }
+}
+
+let productService = new ProductService();
+productService.getProduct(123); // Output: [Current Date and Time] Method "getProduct" called with arguments: [123]
+```
+
+**Explanation:**
+
+1. We define a `LogService` with a static decorator `logMethodCall`.
+2. This decorator adds logging functionality with a timestamp for any method it's applied to.
+3. We use the decorator on the `getProduct` method in the `ProductService`.
+
+**Remember:**
+
+- Decorators empower you to create reusable logging or other service functionalities that can be applied across your application.
+
+### Conclusion: Mastering the Art of Decorating
+
+By understanding the concepts of decorators, creating and using them for classes, properties, and methods, and leveraging decorator composition, you've unlocked a powerful tool for enhancing your TypeScript code. As you progress, explore advanced topics like decorators for factories, parameters, and decorators that return decorators (higher-order decorators) to further refine your TypeScript skills.
+
+**Remember:**
+
+- Mastering decorators empowers you to write cleaner, more modular, and more maintainable TypeScript code.
+- Leverage decorators strategically to improve code organization and reusability.
+
+### Additional Resources
+
+Here are some resources for further exploration:
+
+- [TypeScript Handbook - Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)
+- Learn TypeScript - Decorators
+
+By delving into these resources and practicing with decorators in your own projects, you'll solidify your understanding and become proficient in utilizing this powerful feature of TypeScript for more robust and maintainable code.
