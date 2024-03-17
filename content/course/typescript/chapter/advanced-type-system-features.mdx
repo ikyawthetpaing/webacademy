@@ -1,0 +1,219 @@
+---
+index: 16
+title: "TypeScript Advanced Type System Features"
+---
+
+Welcome, TypeScript enthusiasts! In this chapter, we'll embark on a journey to explore the depths of the TypeScript type system. We'll delve into conditional types, mapped types, and type inference/deduction, features that empower you to write more expressive, flexible, and type-safe code. Buckle up and get ready to unlock the true potential of TypeScript's typing capabilities!
+
+## 1. Mastering Conditions with Conditional Types
+
+Imagine writing types that change their behavior based on conditions – that's the magic of conditional types in TypeScript! They allow you to define the structure of a type based on the outcome of a type check.
+
+**Syntax:**
+
+```typescript
+type ConditionalType<T extends X | Y, Y extends Z | never = never> = T extends X
+  ? TypeIfTrue
+  : TypeIfFalse;
+```
+
+- `T extends X | Y`: Checks if the type `T` extends either `X` or `Y`.
+- `Y extends Z | never`: (Optional) An additional check on the type `Y`.
+- `TypeIfTrue`: The type to use if the condition `T extends X` is true.
+- `TypeIfFalse`: The type to use if the condition `T extends X` is false.
+
+**Example 1: String Literal Type Check**
+
+Let's define a type that represents either a "success" or "error" string literal:
+
+```typescript
+type Message<T extends string> = T extends "success" ? string : never;
+
+const successMessage: Message<"success"> = "Operation successful!"; // Type safe
+// const errorMessage: Message<"error"> = "An error occurred"; // Error: Type 'error' does not extend 'success'
+```
+
+**Explanation:**
+
+1. We define a generic type `Message` that takes a string literal type `T` as a parameter.
+2. Inside the conditional type, we check if `T` extends "success".
+3. If the condition is true, the type becomes `string`, allowing us to assign a string value to the `successMessage` variable.
+4. If the condition is false (any other string literal besides "success"), the type becomes `never`, preventing assignment of any value to a variable of type `Message`.
+
+**Example 2: Function Argument Type Check**
+
+Imagine a function that expects either a number or a string argument and returns a different type based on the argument type:
+
+```typescript
+type Length<T> = ConditionalType<T, string, number>;
+
+function getLength<T>(arg: T): Length<T> {
+  return (arg as string).length; // Safe type assertion for clarity
+}
+
+const numLength = getLength(10); // Type: number (length of number 10)
+const strLength = getLength("Hello"); // Type: number (length of string "Hello")
+```
+
+**Explanation:**
+
+1. We define a generic type `Length` that uses a conditional type to infer the return type based on the argument type.
+2. The conditional type checks if `T` extends `string`.
+3. If `T` is a string, the return type becomes `number` (length of the string).
+4. If `T` is not a string (i.e., a number), the return type remains `T` (unchanged).
+5. The `getLength` function takes a generic argument `T` and uses a type assertion to ensure the argument is treated as a string for length calculation.
+
+**Remember:**
+
+- Conditional types provide flexibility in defining types based on runtime conditions.
+- Use them to create type guards that ensure type safety and prevent invalid assignments.
+
+## 2. Reshaping Types with Mapped Types
+
+Imagine creating a new type by transforming the properties of an existing type – that's the power of mapped types in TypeScript! They allow you to iterate over the properties of a type and create a new type with modified properties.
+
+**Syntax:**
+
+```typescript
+type MappedType<T> = {
+  [P in keyof T]: /* Transformation applied to each property of type T */;
+};
+```
+
+- `T`: The type whose properties you want to iterate over.
+- `P in keyof T`: Looping through each property key (`P`) of the type `T`.
+- `/* Transformation applied to each property of type T */`: The transformation you want to apply to each property (e.g., changing type, adding a prefix).
+
+**Example 1: Making Properties Optional**
+
+Let's create a new type that makes all properties of an existing type optional:
+
+```typescript
+type User = {
+  name: string;
+  age: number;
+  isActive: boolean;
+};
+
+type OptionalUser = MappedType<User>; // This won't work yet!
+
+// Fix: Use a conditional type within the mapped type
+type OptionalUser = MappedType<User> = {
+  [P in keyof User]?: User[P];
+};
+
+const maybeUser: OptionalUser = {
+  name: "John", // Optional property
+};
+
+// const invalidUser: OptionalUser = {}; // Error: All properties are optional now
+```
+
+**Explanation:**
+
+1. We define a type `User` with three properties.
+2. We attempt to define `OptionalUser` as a mapped type of `User`. However, this results in an error because mapped types require a transformation for each property.
+3. We fix the error by using a conditional type within the mapped type definition.
+4. Inside the mapped type, we iterate over each property key (`P`) of `User`.
+5. The conditional type `User[P] ?` makes each property type optional by using the question mark (`?`).
+6. The `maybeUser` variable demonstrates assigning a partial user object with only the `name` property.
+
+**Example 2: Adding a Prefix to Property Names**
+
+Let's create a new type that adds a "user\_" prefix to all property names of an existing type:
+
+```typescript
+type User = {
+  name: string;
+  age: number;
+};
+
+type UserWithPrefix = MappedType<User> = {
+  [`user_${P}`]: User[P];
+};
+
+const prefixedUser: UserWithPrefix = {
+  user_name: "Alice",
+  user_age: 30,
+};
+```
+
+**Explanation:**
+
+1. We define a type `User` with two properties.
+2. We define `UserWithPrefix` as a mapped type of `User`.
+3. Inside the mapped type, we use template literals (`user*${P}`) to create new property names with the "user\*" prefix before each original property key (`P`).
+4. The type of each property remains the same as in the original `User` type.
+5. The `prefixedUser` variable demonstrates assigning values to the prefixed properties.
+
+**Remember:**
+
+- Mapped types offer a powerful way to transform existing types into new types with modified properties.
+- Use them to create optional properties, add prefixes/suffixes, or apply other transformations.
+
+## 3. Unveiling the Magic: Type Inference and Deduction
+
+Throughout your TypeScript journey, you've likely encountered type inference and deduction – these concepts are fundamental to how TypeScript automatically determines the types of variables and expressions.
+
+**Type Inference:**
+
+- The process by which TypeScript automatically assigns a type to a variable or expression based on its initialization value or usage context.
+- Reduces the need for explicit type annotations, improving code readability.
+
+**Example:**
+
+```typescript
+const message = "Hello, world!"; // Type inferred as string
+const sum = 10 + 20; // Type inferred as number
+
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+const greeting = greet("Alice"); // Type of 'greeting' inferred as string
+```
+
+**Type Deduction:**
+
+- A more complex process where TypeScript infers the type of a variable based on its usage within a broader context, such as function arguments or conditional statements.
+
+**Example:**
+
+```typescript
+let value: number | string;
+
+if (Math.random() > 0.5) {
+  value = "String value";
+} else {
+  value = 10;
+}
+
+// Type of 'value' is inferred as 'string | number' based on its possible values
+console.log(value);
+```
+
+**Remember:**
+
+- While type inference and deduction are powerful, it's recommended to use explicit type annotations in certain scenarios for clarity and maintainability.
+- For complex scenarios, consider using type assertions to provide the compiler with additional information about the types involved.
+
+## Conclusion: A World of Flexible Types
+
+By mastering conditional types, mapped types, type inference, and type deduction, you've unlocked a deeper understanding of the TypeScript type system. These features empower you to write more expressive, flexible, and type-safe code, ensuring a smoother and more robust development experience.
+
+**Remember:**
+
+- The TypeScript type system provides a powerful foundation for building reliable and maintainable applications.
+- Explore advanced type system features like conditional and mapped types to create more flexible and reusable type definitions.
+- Leverage type inference and deduction for cleaner code, but don't hesitate to use explicit type annotations when necessary.
+
+## Additional Resources
+
+The journey to becoming a TypeScript type system guru doesn't stop here. Here are some valuable resources to delve deeper:
+
+- [TypeScript Documentation - Conditional Types](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html)
+- [TypeScript Documentation - Mapped Types](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html)
+- [Blog: Demystifying TypeScript's Conditional Types](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html)
+- [Article: Exploring Mapped Types in TypeScript](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html)
+
+By actively practicing these concepts and exploring the provided resources, you'll solidify your grasp of the TypeScript type system and become a master of crafting type-safe and expressive code. Happy coding!
