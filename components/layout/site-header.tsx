@@ -2,8 +2,8 @@ import { HTMLAttributes } from "react";
 import Link from "next/link";
 import { NavItem } from "@/types";
 
+import { courses } from "@/config/course";
 import { siteConfig } from "@/config/site";
-import { getCoursesMetadata } from "@/lib/content/course";
 import { cn } from "@/lib/utils";
 import { SearchPostForm } from "@/components/form/search-post-form";
 import { MobileNavSheet } from "@/components/layout/mobile-nav-sheet";
@@ -17,7 +17,6 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 export async function SiteHeader({ navItems, className, ...props }: Props) {
-  const courses = await getCoursesMetadata();
   return (
     <header
       className={cn(
@@ -29,18 +28,18 @@ export async function SiteHeader({ navItems, className, ...props }: Props) {
       <div className="container flex items-center justify-between pt-2">
         <div>
           <NavItems items={navItems} className="hidden md:flex" />
-          <div className="block md:hidden">
+          <div className="flex items-center md:hidden">
             <MobileNavSheet navItems={navItems} />
           </div>
         </div>
         <div className="flex justify-center">
-          <Link href="/" className="font-heading text-2xl font-bold">
+          <Link href="/" className="font-heading text-xl font-bold">
             {siteConfig.name}
           </Link>
         </div>
         <div className="flex justify-end">
           <SearchPostForm className="hidden h-8 md:flex" actionUrl="/blog" />
-          <div className="block md:hidden">
+          <div className="flex items-center md:hidden">
             <SearchPostDialog actionUrl="/blog" />
           </div>
         </div>

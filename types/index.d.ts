@@ -41,3 +41,11 @@ export type PostTag = {
 export type PostConfig = {
   tags: PostTag[];
 };
+
+export interface CourseMetadata {
+  title: string;
+  icon: IconName;
+  slugAsParams: string;
+}
+
+export type PostCategory = { title: string; description: string; slug: string };

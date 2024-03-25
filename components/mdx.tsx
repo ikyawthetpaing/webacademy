@@ -93,10 +93,10 @@ function CustomMDX({ ...props }: MDXRemoteProps) {
 }
 
 interface Props extends HTMLAttributes<HTMLElement> {
-  content: string;
+  raw: string;
 }
 
-export function Mdx({ content, className, ...props }: Props) {
+export function Mdx({ raw, className, ...props }: Props) {
   return (
     <div
       className={cn(
@@ -105,7 +105,7 @@ export function Mdx({ content, className, ...props }: Props) {
       )}
       {...props}
     >
-      <CustomMDX source={content} />
+      <CustomMDX source={raw} />
     </div>
   );
 }

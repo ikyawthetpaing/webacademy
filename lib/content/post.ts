@@ -1,41 +1,8 @@
-"use server";
-
-import { promises as fs } from "fs";
-import path from "path";
+import { allPosts } from "@/.contentlayer/generated";
 import { PostTag } from "@/types";
 
 import { getPostViewsCount } from "@/lib/db/action/post-views";
 import { slugify } from "@/lib/utils";
-
-const postsIndexFilePath = path.join(
-  process.cwd(),
-  ".generated-content",
-  "post",
-  "index.json"
-);
-const postCategoriesFilePath = path.join(
-  process.cwd(),
-  ".generated-content",
-  "post",
-  "categories.json"
-);
-const postDataFilePath = (slug: string) =>
-  path.join(process.cwd(), ".generated-content", "post", `${slug}.mdx.json`);
-
-export interface Post {
-  slug: string;
-  title: string;
-  thumbnail: string;
-  description: string;
-  category: string;
-  date: string;
-  featured: boolean;
-  author: string;
-}
-
-interface PostWithContent extends Post {
-  content: string;
-}
 
 export async function getPostsMetadata({
   excludes = [],
@@ -53,9 +20,7 @@ export async function getPostsMetadata({
   query?: string | null;
 }) {
   try {
-    const postsData = await fs.readFile(postsIndexFilePath, "utf-8");
-    const postsJson: Record<string, Post> = JSON.parse(postsData);
-    let postsMetadata = Object.values(postsJson).map((post) => ({
+    let postsMetadata = Object.values(allPosts).map((post) => ({
       ...post,
       views: 0,
     }));
@@ -85,7 +50,7 @@ export async function getPostsMetadata({
       case "popular":
         postsMetadata = await Promise.all(
           postsMetadata.map(async (metadata) => {
-            const views = await getPostViewsCount(metadata.slug);
+            const views = await getPostViewsCount(metadata.slugAsParams);
             return { ...metadata, views };
           })
         );
@@ -115,34 +80,6 @@ function getPageItems<T>(
   return inputArray.slice(startIndex, endIndex);
 }
 
-export async function getPost(slug: string) {
-  try {
-    const postData = await fs.readFile(postDataFilePath(slug), "utf-8");
-    return JSON.parse(postData) as PostWithContent;
-  } catch (error) {
-    console.error("Error getting post:", error);
-    return null;
-  }
-}
-
-export async function getPostCategories() {
-  try {
-    const categoriesData = await fs.readFile(postCategoriesFilePath, "utf-8");
-    const categoriesJson = JSON.parse(categoriesData);
-    return Object.values(categoriesJson) as string[];
-  } catch (error) {
-    console.error("Error getting post categories:", error);
-    return [];
-  }
-}
-
-export async function getPostCategory(slug: string) {
-  try {
-    const categoriesData = await fs.readFile(postCategoriesFilePath, "utf-8");
-    const categoriesJson: Record<string, string> = JSON.parse(categoriesData);
-    return categoriesJson[slug] || null;
-  } catch (error) {
-    console.error("Error getting post category:", error);
-    return null;
-  }
+export function getPost(slug: string) {
+  return allPosts.find(({ slugAsParams }) => slugAsParams === slug) || null;
 }

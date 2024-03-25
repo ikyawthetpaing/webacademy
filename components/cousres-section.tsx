@@ -1,7 +1,8 @@
 import { HTMLAttributes } from "react";
 import Link from "next/link";
+import { CourseMetadata } from "@/types";
 
-import { CourseMetadata } from "@/lib/content/course";
+// import { CourseMetadata } from "@/lib/content/course";
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/icons";
 
@@ -16,10 +17,10 @@ export function CousresSection({ courses, className, ...props }: Props) {
         Learn Web Developement with Our Free Courses
       </h2>
       <div className="flex flex-wrap gap-4">
-        {courses.map(({ title, icon, slug }, index) => (
+        {courses.map(({ title, icon, slugAsParams }, index) => (
           <Link
             key={index}
-            href={`/course/${slug}`}
+            href={`/course/${slugAsParams}`}
             className="bg-muted-foreground group relative aspect-square max-h-36 min-w-36 flex-1 overflow-hidden rounded-2xl sm:max-h-44 sm:min-w-44"
           >
             <Icon

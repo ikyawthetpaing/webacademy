@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 
-import { postConfig } from "@/config/post";
-import { getPostCategories } from "@/lib/content/post";
+import { postCategories, postConfig } from "@/config/post";
 import { absoluteUrl } from "@/lib/utils";
 import { SearchPostForm } from "@/components/form/search-post-form";
 import { PostCategoryFilter } from "@/components/post-category-filter";
@@ -35,14 +34,13 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export default async function BlogPage({ searchParams }: Props) {
-  const categories = await getPostCategories();
+export default function BlogPage({ searchParams }: Props) {
   return (
     <section className="container grid gap-8">
       <h1 className="font-heading text-center text-3xl font-bold">
         Learn to Code with Our Tutorials & Articles
       </h1>
-      <PostCategoryFilter categories={categories} className="mx-auto" />
+      <PostCategoryFilter categories={postCategories} className="mx-auto" />
       <PostTagsFilter tags={postConfig.tags} className="mx-auto" />
       <SearchPostForm className="mx-auto h-10 max-w-96" />
       <PostList searchParams={searchParams} />

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { getPostCategories } from "@/lib/content/post";
+import { postCategories } from "@/config/post";
 import { absoluteUrl } from "@/lib/utils";
 import { CategoriesSection } from "@/components/categories-section";
 
@@ -27,9 +27,6 @@ export function generateMetadata(): Metadata {
 
 export default async function CategoryPage() {
   return (
-    <CategoriesSection
-      categories={await getPostCategories()}
-      className="container"
-    />
+    <CategoriesSection categories={postCategories} className="container" />
   );
 }

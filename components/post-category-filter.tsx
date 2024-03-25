@@ -4,11 +4,12 @@ import { HTMLAttributes, Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCreateQueryString } from "@/hooks/create-query-string";
+import { PostCategory } from "@/types";
 
-import { cn, slugify } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  categories: string[];
+  categories: PostCategory[];
 }
 export function Filter({ categories, className, ...props }: Props) {
   const searchParams = useSearchParams();
@@ -19,10 +20,7 @@ export function Filter({ categories, className, ...props }: Props) {
 
   useEffect(() => {
     const param = searchParams.get("category");
-    if (
-      param &&
-      categories.find((categoryName) => slugify(categoryName) === param)
-    ) {
+    if (param && categories.find(({ slug }) => slug === param)) {
       setCategory(param);
     } else {
       if (category) {
@@ -36,23 +34,23 @@ export function Filter({ categories, className, ...props }: Props) {
       className={cn("flex max-w-4xl flex-wrap justify-center gap-1", className)}
       {...props}
     >
-      {["All", ...categories].map((categoryName, index) => (
-        <Link
-          key={index}
-          href={`${pathname}?${createQueryString({ category: categoryName === "All" ? null : slugify(categoryName), page_index: 0 })}`}
-          className={cn(
-            "min-w-max rounded-xl border px-3 py-1.5 duration-150 hover:px-4",
-            {
-              "bg-primary text-primary-foreground px-4":
-                slugify(categoryName) === category ||
-                (category === null && categoryName === "All"),
-            }
-          )}
-          scroll={false}
-        >
-          {categoryName}
-        </Link>
-      ))}
+      {[{ title: "All", slug: null }, ...categories].map(
+        ({ title, slug }, index) => (
+          <Link
+            key={index}
+            href={`${pathname}?${createQueryString({ category: slug, page_index: 0 })}`}
+            className={cn(
+              "min-w-max rounded-xl border px-3 py-1.5 duration-150 hover:px-4",
+              {
+                "bg-primary text-primary-foreground px-4": slug === category,
+              }
+            )}
+            scroll={false}
+          >
+            {title}
+          </Link>
+        )
+      )}
     </div>
   );
 }

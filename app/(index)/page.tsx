@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { PostCategory } from "@/types";
 
+import { courses } from "@/config/course";
+import { postCategories } from "@/config/post";
 import { siteConfig } from "@/config/site";
-import { getCoursesMetadata } from "@/lib/content/course";
-import { getPostCategories } from "@/lib/content/post";
 import { CategoriesSection } from "@/components/categories-section";
 import { CousresSection } from "@/components/cousres-section";
 import { EmailSubscribeForm } from "@/components/form/email-subscribe-form";
@@ -17,14 +18,12 @@ interface Props {
 }
 
 export default async function Home({ searchParams }: Props) {
-  const categories = await getPostCategories();
-  const courses = await getCoursesMetadata();
   return (
     <div className="container mt-16 flex flex-col gap-24">
       <HeroSection />
       <CousresSection courses={courses} />
-      <CategoriesSection categories={categories} className="mx-auto" />
-      <LatestPosts searchParams={searchParams} categories={categories} />
+      <CategoriesSection categories={postCategories} className="mx-auto" />
+      <LatestPosts searchParams={searchParams} categories={postCategories} />
       <FeaturedPostsSection />
     </div>
   );
@@ -68,7 +67,7 @@ function LatestPosts({
   searchParams,
   categories,
 }: Props & {
-  categories: string[];
+  categories: PostCategory[];
 }) {
   return (
     <section className="grid gap-8">

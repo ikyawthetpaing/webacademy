@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getChapterContent, getCourseChapters } from "@/lib/content/course";
+import { getChapter, getCourseChapters } from "@/lib/content/course";
 import { absoluteUrl, cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
@@ -14,39 +14,28 @@ interface Props {
   };
 }
 
-async function getChapterFromParams(params: Props["params"]) {
-  const [courseSlug, chapterSlug] = params.slug;
-  const chapter = await getChapterContent(
-    courseSlug,
-    chapterSlug ? chapterSlug : "index"
-  );
+function getChapterFromParams(params: Props["params"]) {
+  const [courseParam, chapterParam] = params.slug;
+  const chapter = getChapter(courseParam, chapterParam);
 
   return chapter;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const [courseSlug] = params.slug;
-  const chapter = await getChapterFromParams(params);
+export function generateMetadata({ params }: Props): Metadata {
+  const chapter = getChapterFromParams(params);
 
   if (!chapter) {
     return {};
   }
 
-  const {
-    metadata: { title },
-    slug,
-  } = chapter;
+  const { title, slug } = chapter;
 
   return {
     title,
     openGraph: {
       title: title,
       type: "article",
-      url: absoluteUrl(
-        slug === "index"
-          ? `/course/${courseSlug}`
-          : `/course/${courseSlug}/${slug}`
-      ),
+      url: absoluteUrl(slug),
     },
     twitter: {
       card: "summary_large_image",
@@ -55,22 +44,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CoursePage({ params }: Props) {
-  const chapter = await getChapterFromParams(params);
+export default function CoursePage({ params }: Props) {
+  const chapter = getChapterFromParams(params);
 
   if (!chapter) {
     notFound();
   }
 
-  const {
-    content,
-    metadata: { title },
-  } = chapter;
+  const { title, body, index } = chapter;
 
   const [courseSlug] = params.slug;
-  const chapters = await getCourseChapters(courseSlug);
-  const prevChapterIndex = parseInt(chapter.metadata.index.toString()) - 1;
-  const nextChapterIndex = parseInt(chapter.metadata.index.toString()) + 1;
+  const chapters = getCourseChapters(courseSlug);
+  const prevChapterIndex = index - 1;
+  const nextChapterIndex = index + 1;
 
   const prevChapter = prevChapterIndex >= 0 ? chapters[prevChapterIndex] : null;
   const nextChapter =
@@ -79,12 +65,12 @@ export default async function CoursePage({ params }: Props) {
   return (
     <article>
       <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
-      <Mdx content={content} className="max-w-max" />
+      <Mdx raw={body.raw} className="max-w-max" />
       <hr className="mt-6" />
       <div className="mt-6 flex flex-wrap justify-between gap-4">
         {prevChapter && (
           <Link
-            href={`/course/${courseSlug}/${prevChapter.slug}`}
+            href={prevChapter.slug}
             className={cn(buttonVariants({ variant: "outline" }), "flex gap-2")}
           >
             <Icons.chevronLeft className="size-4" />
@@ -94,7 +80,7 @@ export default async function CoursePage({ params }: Props) {
         <div />
         {nextChapter && (
           <Link
-            href={`/course/${courseSlug}/${nextChapter.slug}`}
+            href={nextChapter.slug}
             className={cn(buttonVariants({ variant: "outline" }), "flex gap-2")}
           >
             Next

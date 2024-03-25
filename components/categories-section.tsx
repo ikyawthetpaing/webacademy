@@ -1,10 +1,11 @@
 import { HTMLAttributes } from "react";
 import Link from "next/link";
+import { PostCategory } from "@/types";
 
-import { cn, slugify } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  categories: string[];
+  categories: PostCategory[];
 }
 
 export function CategoriesSection({ categories, className, ...props }: Props) {
@@ -17,10 +18,10 @@ export function CategoriesSection({ categories, className, ...props }: Props) {
         Blog Categories
       </h2>
       <div className="flex flex-wrap justify-center gap-2">
-        {categories.map((category, index) => (
-          <Link key={index} href={`/category/${slugify(category)}`}>
+        {categories.map(({ title, slug }, index) => (
+          <Link key={index} href={`/category/${slug}`}>
             <div className="min-w-max rounded-xl border px-4 py-2 duration-150 hover:px-6">
-              {category}
+              {title}
             </div>
           </Link>
         ))}

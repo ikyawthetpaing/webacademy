@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
+import { Post } from "@/.contentlayer/generated";
 
-import { Post } from "@/lib/content/post";
 import { absoluteUrl, formatDate, slugify } from "@/lib/utils";
 
 interface Props {
@@ -13,7 +13,7 @@ export function PostItem({ post }: Props) {
   const { title, category, date, slug, thumbnail } = post;
   const parsedUrl = new URL(headers().get("x-url") || absoluteUrl("/blog"));
   const pathAndQuery = parsedUrl.pathname + parsedUrl.search;
-  const url = `/blog/${slug}?back=${pathAndQuery}`;
+  const url = `${slug}?back=${pathAndQuery}`;
 
   return (
     <div className="grid gap-2">

@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Chapter } from "@/.contentlayer/generated";
 import { NavItem } from "@/types";
 
+import { getCourseTitle } from "@/config/course";
 import { siteConfig } from "@/config/site";
-import {
-  Chapter,
-  getCourseChapters,
-  getCourseTitle,
-} from "@/lib/content/course";
+import { getCourseChapters } from "@/lib/content/course";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Icons } from "@/components/icons";
@@ -25,12 +23,12 @@ export function MobileNavSheet({ navItems }: Props) {
   const [open, setOpen] = useState(false);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [courseTitle, setCourseTitle] = useState<string | null>(null);
-  const [, path, courseSlug, chapterSlug] = pathname.split("/");
+  const [, path, courseParam, chapterParam] = pathname.split("/");
 
   useEffect(() => {
-    if (path === "course" && courseSlug) {
-      getCourseChapters(courseSlug).then((values) => setChapters(values));
-      getCourseTitle(courseSlug).then((value) => setCourseTitle(value));
+    if (path === "course" && courseParam) {
+      setChapters(getCourseChapters(courseParam));
+      setCourseTitle(getCourseTitle(courseParam));
       console.log("update state");
     } else {
       if (chapters.length) {
@@ -40,7 +38,7 @@ export function MobileNavSheet({ navItems }: Props) {
         setCourseTitle(null);
       }
     }
-  }, [chapters.length, courseSlug, courseTitle, path]);
+  }, [chapters.length, courseParam, courseTitle, path]);
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -68,13 +66,13 @@ export function MobileNavSheet({ navItems }: Props) {
               {chapters.map(({ title, slug }, index) => (
                 <li key={index}>
                   <Link
-                    href={`/course/${courseSlug}/${slug}`}
+                    href={`/course/${courseParam}/${slug}`}
                     className={cn(
                       "text-muted-foreground underline-offset-4 hover:underline",
                       {
                         "underline text-foreground":
-                          slug === chapterSlug ||
-                          (!chapterSlug && slug === "index"),
+                          slug === chapterParam ||
+                          (!chapterParam && slug === "index"),
                       }
                     )}
                   >

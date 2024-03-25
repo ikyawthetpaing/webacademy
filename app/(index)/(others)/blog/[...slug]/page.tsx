@@ -23,9 +23,9 @@ interface PostProps {
   };
 }
 
-async function getPostFromParams(params: PostProps["params"]) {
+function getPostFromParams(params: PostProps["params"]) {
   const slug = params.slug.join("/");
-  const post = await getPost(slug);
+  const post = getPost(slug);
 
   if (!post) {
     null;
@@ -34,10 +34,8 @@ async function getPostFromParams(params: PostProps["params"]) {
   return post;
 }
 
-export async function generateMetadata({
-  params,
-}: PostProps): Promise<Metadata> {
-  const post = await getPostFromParams(params);
+export function generateMetadata({ params }: PostProps): Metadata {
+  const post = getPostFromParams(params);
 
   if (!post) {
     return {};
@@ -76,8 +74,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function Post({ params, searchParams }: PostProps) {
-  const post = await getPostFromParams(params);
+export default function Post({ params, searchParams }: PostProps) {
+  const post = getPostFromParams(params);
 
   if (!post) {
     notFound();
@@ -91,10 +89,10 @@ export default async function Post({ params, searchParams }: PostProps) {
     thumbnail,
     category,
     author: authorSlug,
-    content,
+    body: { raw },
   } = post;
-  const author = await getAuthor(authorSlug);
-  const tocItems = generateTableOfContents(content);
+  const author = getAuthor(authorSlug);
+  const tocItems = generateTableOfContents(raw);
   const backurl =
     typeof searchParams?.back === "string" ? searchParams.back : null;
 
@@ -138,13 +136,13 @@ export default async function Post({ params, searchParams }: PostProps) {
             <div className="flex flex-col gap-4">
               <h2 className="font-heading font-bold">Written by</h2>
               <Link
-                href={author?.website!}
+                href={author?.website_url!}
                 target="_blank"
                 className="flex w-max items-center gap-3"
               >
                 <div className="bg-muted size-14 shrink-0 overflow-hidden rounded-full">
                   <Image
-                    src={author?.avatar!}
+                    src={author?.avatar_image_url!}
                     alt={author?.name!}
                     width={56}
                     height={56}
@@ -170,7 +168,7 @@ export default async function Post({ params, searchParams }: PostProps) {
             </div>
             <TableOfContents tocItems={tocItems} />
           </div>
-          <Mdx content={content} className="min-w-0 max-w-max flex-1" />
+          <Mdx raw={raw} className="min-w-0 max-w-max flex-1" />
         </div>
       </article>
       <div className="flex flex-col gap-8">

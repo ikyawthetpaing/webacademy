@@ -57,10 +57,15 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
+  const {
+    body: { raw },
+    title,
+  } = page;
+
   return (
     <article className="container flex flex-col gap-8">
-      <h1 className="font-heading text-4xl font-bold">{page.title}</h1>
-      <Mdx content={page.content} className="max-w-max" />
+      <h1 className="font-heading text-4xl font-bold">{title}</h1>
+      <Mdx raw={raw} className="max-w-max" />
     </article>
   );
 }

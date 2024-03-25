@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { getCoursesMetadata } from "@/lib/content/course";
+import { courses } from "@/config/course";
 import { absoluteUrl } from "@/lib/utils";
 import { CousresSection } from "@/components/cousres-section";
 
@@ -26,10 +26,5 @@ export function generateMetadata(): Metadata {
 }
 
 export default async function CoursesPage() {
-  return (
-    <CousresSection
-      courses={await getCoursesMetadata()}
-      className="container mt-16"
-    />
-  );
+  return <CousresSection courses={courses} className="container mt-16" />;
 }
