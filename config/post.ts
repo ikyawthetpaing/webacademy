@@ -9,70 +9,40 @@ export const postConfig: PostConfig = {
 
 export const postCategories: PostCategory[] = [
   {
-    title: "HTML",
+    title: "Coding Tips & Tricks",
     description:
-      "Everything about Hypertext Markup Language (HTML) for building web pages.",
-    slug: "html",
+      "Discover expert tips and clever coding techniques to enhance your development skills and efficiency.",
+    slug: "coding-tips-tricks",
   },
   {
-    title: "CSS",
+    title: "Tutorials & How-To Guides",
     description:
-      "Cascading Style Sheets (CSS) for styling HTML elements and making them visually appealing.",
-    slug: "css",
+      "Step-by-step tutorials and guides to help you master various aspects of web development and programming.",
+    slug: "tutorials-how-to-guides",
   },
   {
-    title: "JavaScript",
+    title: "Design Inspiration & Trends",
     description:
-      "Client-side scripting language used for adding interactivity and dynamic behavior to web pages.",
-    slug: "javascript",
+      "Explore the latest design trends and get inspired by innovative designs from around the web.",
+    slug: "design-inspiration-trends",
   },
   {
-    title: "Frontend Frameworks",
+    title: "Tools & Resources",
     description:
-      "Popular frontend frameworks like React, Angular, and Vue.js for building dynamic web applications.",
-    slug: "frontend-frameworks",
+      "Discover essential tools, resources, and software to streamline your development workflow and boost productivity.",
+    slug: "tools-resources",
   },
   {
-    title: "Backend Development",
+    title: "Industry News & Updates",
     description:
-      "Server-side development using technologies like Node.js, Express.js, and databases.",
-    slug: "backend-development",
+      "Stay informed with the latest news, trends, and updates from the ever-evolving world of web development.",
+    slug: "industry-news-updates",
   },
   {
-    title: "Full-Stack Development",
+    title: "Freelancing & Career Development",
     description:
-      "Master both frontend and backend technologies to become a full-stack developer.",
-    slug: "full-stack-development",
-  },
-  {
-    title: "Web Design Principles",
-    description:
-      "Fundamental principles of web design including layout, typography, and color theory.",
-    slug: "web-design-principles",
-  },
-  {
-    title: "Responsive Web Design",
-    description:
-      "Techniques for creating websites that adapt to various screen sizes and devices.",
-    slug: "responsive-web-design",
-  },
-  {
-    title: "Version Control",
-    description:
-      "Learn version control systems like Git for managing code changes and collaboration.",
-    slug: "version-control",
-  },
-  {
-    title: "Web Accessibility",
-    description:
-      "Ensure that websites are usable by people with disabilities, following accessibility standards.",
-    slug: "web-accessibility",
-  },
-  {
-    title: "Search Engine Optimization (SEO)",
-    description:
-      "Strategies for optimizing websites to improve visibility and ranking in search engine results.",
-    slug: "seo",
+      "Learn valuable insights and strategies to advance your freelance career and thrive in the tech industry.",
+    slug: "freelancing-career-development",
   },
 ];
 

@@ -3,17 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Post } from "@/.contentlayer/generated";
 
-import { absoluteUrl, formatDate, slugify } from "@/lib/utils";
+import { getPostCategory } from "@/config/post";
+import { absoluteUrl, formatDate } from "@/lib/utils";
 
 interface Props {
   post: Post;
 }
 
 export function PostItem({ post }: Props) {
-  const { title, category, date, slug, thumbnail } = post;
+  const { title, category: categorySlug, date, slug, thumbnail } = post;
   const parsedUrl = new URL(headers().get("x-url") || absoluteUrl("/blog"));
   const pathAndQuery = parsedUrl.pathname + parsedUrl.search;
   const url = `${slug}?back=${pathAndQuery}`;
+  const category = getPostCategory(categorySlug);
 
   return (
     <div className="grid gap-2">
@@ -28,10 +30,10 @@ export function PostItem({ post }: Props) {
           />
         </Link>
         <Link
-          href={`/category/${slugify(category)}`}
+          href={`/category/${category?.slug}`}
           className="absolute right-4 top-4 rounded-lg bg-[rgba(255,255,255,0.45)] px-3 py-1 text-sm capitalize backdrop-blur-sm dark:bg-[rgba(0,0,0,0.45)]"
         >
-          {category}
+          {category?.title}
         </Link>
       </div>
       <p className="text-sm font-light uppercase">{formatDate(date)}</p>

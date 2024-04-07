@@ -11,5 +11,7 @@ export function getChapter(courseParam: string, chapterParam: string | null) {
 export function getCourseChapters(courseParam: string) {
   return allChapters
     .filter(({ slugAsParams }) => slugAsParams.split("/")[0] === courseParam)
-    .sort((a, b) => a.index - b.index);
+    .sort((a, b) => a.index - b.index) as ContentMetadata<Chapter>[];
 }
+
+export type ContentMetadata<T> = Omit<T, "body" | "_id" | "_raw" | "type">;

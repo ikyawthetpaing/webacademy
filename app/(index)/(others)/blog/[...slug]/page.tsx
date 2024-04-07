@@ -3,10 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { getPostCategory } from "@/config/post";
 import { getAuthor } from "@/lib/content/author";
 import { getPost } from "@/lib/content/post";
 import { generateTableOfContents } from "@/lib/toc";
-import { absoluteUrl, formatDate, slugify } from "@/lib/utils";
+import { absoluteUrl, formatDate } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Mdx } from "@/components/mdx";
 import { PostList } from "@/components/post-list";
@@ -87,10 +88,11 @@ export default function Post({ params, searchParams }: PostProps) {
     description,
     date,
     thumbnail,
-    category,
+    category: categorySlug,
     author: authorSlug,
     body: { raw },
   } = post;
+  const category = getPostCategory(categorySlug);
   const author = getAuthor(authorSlug);
   const tocItems = generateTableOfContents(raw);
   const backurl =
@@ -109,11 +111,11 @@ export default function Post({ params, searchParams }: PostProps) {
         </Link>
         <div className="flex flex-col items-center gap-4">
           <Link
-            href={`/category/${slugify(category)}`}
+            href={`/category/${category?.slug}`}
             className="rounded-lg border px-3 py-1 text-sm transition-all duration-150 hover:px-4"
             title="Category"
           >
-            {category}
+            {category?.title}
           </Link>
           <h1 className="font-heading max-w-[720px] text-center text-4xl font-bold">
             {title}
@@ -174,7 +176,7 @@ export default function Post({ params, searchParams }: PostProps) {
       <div className="flex flex-col gap-8">
         <h2 className="font-heading text-3xl font-bold">Related Posts</h2>
         <PostList
-          fixedCategory={category}
+          fixedCategory={category?.slug}
           showPagination={false}
           excludes={[slug]}
         />
