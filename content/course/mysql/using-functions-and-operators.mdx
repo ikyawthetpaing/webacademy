@@ -1,0 +1,180 @@
+---
+index: 7
+title: "MySQL Using Functions & Operators"
+---
+
+MySQL provides a rich arsenal of functions and operators to manipulate, transform, and analyze your data. This chapter delves into various categories of functions and operators, empowering you to unlock the full potential of your database queries.
+
+## Unleashing the Power of Functions
+
+Functions are pre-defined routines that perform specific calculations or data manipulations within your SQL statements. MySQL offers a wide range of functions categorized by their functionality. Let's explore some commonly used ones:
+
+### 1. Aggregate Functions:
+
+These functions summarize data across multiple rows in a table, providing valuable insights. Here are some popular examples:
+
+- `COUNT(*)`: This function counts the total number of rows in a table or the number of rows that meet a specific condition within the `WHERE` clause (e.g., `COUNT(*)`, `COUNT(column_name)`).
+- `SUM(column_name)`: This function calculates the sum of values in a numeric column.
+- `AVG(column_name)`: This function calculates the average of values in a numeric column.
+- `MIN(column_name)`: This function retrieves the minimum value in a column.
+- `MAX(column_name)`: This function retrieves the maximum value in a column.
+
+**Example 1: Calculating Total Order Value**
+
+Suppose you have an `Orders` table with a `total_amount` column. To find the total sales amount across all orders, you can use:
+
+```sql
+SELECT SUM(total_amount) AS total_sales
+FROM Orders;
+```
+
+This query calculates the sum of all `total_amount` values and presents the result as `total_sales`.
+
+### 2. String Functions:
+
+String functions manipulate text data, allowing you to extract specific parts, modify content, or perform comparisons. Here are some noteworthy examples:
+
+- `CONCAT(string1, string2, ...)`: This function combines multiple strings into a single string.
+- `SUBSTRING(string, start_position, length)`: This function extracts a portion of a string based on the starting position and the desired length.
+- `LOWER(string)`: This function converts all characters in a string to lowercase.
+- `UPPER(string)`: This function converts all characters in a string to uppercase.
+- `LENGTH(string)`: This function retrieves the length (number of characters) of a string.
+
+**Example 2: Extracting First Name from Full Name**
+
+Let's say a `Customers` table has a `full_name` column. To extract just the first names, you can use a combination of functions:
+
+```sql
+SELECT SUBSTRING(full_name, 1, LOCATE(' ', full_name) - 1) AS first_name
+FROM Customers;
+```
+
+This query:
+
+- Uses `SUBSTRING` to extract a portion of the `full_name`.
+- `LOCATE(' ', full_name) - 1` finds the position of the first space within the name and subtracts 1 to get the starting index for the substring.
+- The result is aliased as `first_name` for clarity.
+
+## Applying Mathematical Operators
+
+MySQL supports various mathematical operators that allow you to perform calculations within your queries. These operators work on numeric data types like integers and decimals. Here are some commonly used ones:
+
+- `+`: Addition
+- `-`: Subtraction
+- `*`: Multiplication
+- `/`: Division
+- `%`: Modulus (remainder after division)
+
+**Example 3: Calculating Discounted Price**
+
+Imagine a `Products` table with `price` and `discount` (percentage) columns. To retrieve the discounted price for each product, you can use:
+
+```sql
+SELECT product_name, price * (1 - discount/100) AS discounted_price
+FROM Products;
+```
+
+This query:
+
+- Calculates the discounted price by multiplying the original `price` with (1 minus the `discount` divided by 100).
+- The result is presented as `discounted_price`.
+
+## Combining Functions and Operators
+
+The true power lies in combining functions and operators to create complex expressions within your SQL statements. Here's an example:
+
+```sql
+SELECT customer_name, SUM(order_quantity * product_price) AS total_spent
+FROM Customers c
+INNER JOIN Orders o ON c.customer_id = o.customer_id
+INNER JOIN Products p ON o.product_id = p.product_id
+GROUP BY c.customer_id;
+```
+
+This query:
+
+- Joins three tables (`Customers`, `Orders`, and `Products`) to retrieve customer names and their total spending.
+- It calculates the total spent by multiplying the `order_quantity` with the `product_price` for each order.
+- `SUM` aggregates the total spending for each customer by grouping the results based on `customer_id`.
+- Groups the results by `customer_id` using `GROUP BY`, ensuring separate calculations for each customer.
+- Finally, it presents the `customer_name` and the calculated `total_spent`.
+
+This example demonstrates how functions and operators can be combined to extract valuable insights from your database.
+
+## Conditional Expressions with `CASE`
+
+The `CASE` expression allows you to create conditional logic within your SQL statements. It evaluates a condition and returns a different value based on the outcome.
+
+Here's the basic syntax:
+
+```sql
+CASE
+  WHEN condition1 THEN result1
+  WHEN condition2 THEN result2
+  ...
+  ELSE default_result
+END AS alias_name;
+```
+
+**Example 4: Assigning Customer Tiers based on Orders**
+
+Imagine you want to categorize customers into tiers (Bronze, Silver, Gold) based on their total order amount. You can use a `CASE` expression:
+
+```sql
+SELECT customer_name,
+  CASE
+    WHEN total_spent < 100 THEN 'Bronze'
+    WHEN total_spent >= 100 AND total_spent < 500 THEN 'Silver'
+    ELSE 'Gold'
+  END AS customer_tier
+FROM Customers c
+INNER JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, total_spent;
+```
+
+This query:
+
+- Calculates the total spent per customer using similar logic to the previous example and stores it in a temporary variable (not explicitly shown).
+- The `CASE` expression evaluates the total spent and assigns a customer tier based on defined conditions.
+- The result is presented as `customer_tier`.
+
+## Date and Time Functions
+
+MySQL offers a comprehensive set of functions for working with date and time data. Here are some commonly used ones:
+
+- `CURDATE()`: Returns the current date.
+- `CURTIME()`: Returns the current time.
+- `NOW()`: Returns the current date and time.
+- `DATE_ADD(date, INTERVAL value unit)`: Adds a specified interval (e.g., days, months, years) to a date.
+- `DATE_SUB(date, INTERVAL value unit)`: Subtracts a specified interval from a date.
+- `YEAR(date)`: Extracts the year from a date.
+- `MONTH(date)`: Extracts the month from a date (numeric format).
+- `DAY(date)`: Extracts the day from a date.
+
+**Example 5: Calculating Age based on Birthdate**
+
+Assuming a `Customers` table with a `birthdate` column, you can calculate their approximate age using:
+
+```sql
+SELECT customer_name, YEAR(CURDATE()) - YEAR(birthdate) AS approximate_age
+FROM Customers;
+```
+
+This query:
+
+- Calculates the difference between the current year (`YEAR(CURDATE())`) and the birth year (`YEAR(birthdate)`).
+- This provides an estimate of the customer's age (ignoring the month difference).
+
+**Exploring More Functions:**
+
+MySQL offers a vast collection of functions beyond the ones covered here. Here's a glimpse into some additional categories:
+
+- **Date and Time Functions:** Functions to manipulate, format, and extract information from date and time data types (e.g., `CURDATE()`, `NOW()`, `DATE_FORMAT()`).
+- **Conditional Functions:** Functions that evaluate conditions and return different values based on the outcome (e.g., `CASE`, `IF()`).
+- **Encryption Functions:** Functions to encrypt and decrypt sensitive data for security purposes (e.g., `AES_ENCRYPT()`, `AES_DECRYPT()`).
+
+By delving deeper into these function categories and experimenting with various operators, you'll unlock the true potential of crafting powerful and informative MySQL queries.
+
+## Conclusion
+
+Functions and operators equip you with the tools to manipulate, transform, and analyze your data effectively. By understanding aggregate functions for summarizing data, string functions for text manipulation, and mathematical operators for calculations, you can craft comprehensive queries that extract valuable insights from your database. Remember, practice is key! Explore the diverse functionalities offered by MySQL and experiment with combining functions and operators to become a data manipulation expert.

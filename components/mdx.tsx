@@ -69,6 +69,28 @@ function createHeading(level: number) {
   };
 }
 
+function Table({ data }) {
+  let headers = data.headers.map((header, index) => (
+    <th key={index}>{header}</th>
+  ));
+  let rows = data.rows.map((row, index) => (
+    <tr key={index}>
+      {row.map((cell, cellIndex) => (
+        <td key={cellIndex}>{cell}</td>
+      ))}
+    </tr>
+  ));
+
+  return (
+    <table>
+      <thead>
+        <tr>{headers}</tr>
+      </thead>
+      <tbody>{rows}</tbody>
+    </table>
+  );
+}
+
 let components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -80,6 +102,7 @@ let components = {
   a: CustomLink,
   Callout,
   code: Code,
+  table: Table
 };
 
 function CustomMDX({ ...props }: MDXRemoteProps) {

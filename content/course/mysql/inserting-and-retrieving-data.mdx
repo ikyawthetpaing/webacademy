@@ -1,0 +1,260 @@
+---
+index: 4
+title: "MySQL Inserting & Retrieving Data"
+---
+
+This chapter dives deep into the fundamental operations of populating and retrieving data from your MySQL tables. We'll explore the two essential statements: `INSERT INTO` for adding new records and `SELECT` for fetching existing data. Additionally, we'll unveil the power of the `WHERE` clause to filter and target specific information within your tables.
+
+## Inserting Data with `INSERT INTO`
+
+Imagine your database as a giant filing cabinet, and tables are the folders within it. Each row in a table represents a single document, and columns act as the categories that hold specific information for each document. The `INSERT INTO` statement empowers you to add new documents (rows) filled with relevant details into your designated folders (tables).
+
+Here's the basic syntax of the `INSERT INTO` statement:
+
+```sql
+INSERT INTO table_name (column1, column2, ...)
+VALUES (value1, value2, ...);
+```
+
+Let's break it down:
+
+- `INSERT INTO`: This keyword initiates the data insertion operation.
+- `table_name`: Replace this with the actual name of the table you want to insert data into.
+- `(column1, column2, ...)`: This section specifies a comma-separated list of columns within the table where you want to insert values. You can include all columns or choose specific ones.
+- `VALUES`: This keyword introduces the values you're inserting.
+- `(value1, value2, ...)`: Here, you provide a comma-separated list of values that correspond to the columns mentioned earlier. Ensure the order of values matches the order of columns.
+
+**Example 1: Inserting a New Customer Record**
+
+Let's say you have a table named `Customers` with columns like `customer_id` (auto-incrementing ID), `name`, `email`, and `city`. To add a new customer named Alice residing in New York with her email address alice@wonderland.com, you'd use the following statement:
+
+```sql
+INSERT INTO Customers (name, email, city)
+VALUES ('Alice', 'alice@wonderland.com', 'New York');
+```
+
+In this example, we're omitting the `customer_id` column as it's likely set to auto-increment, meaning the database automatically assigns a unique ID when a new row is inserted.
+
+**Example 2: Inserting Selective Data**
+
+You can also choose to insert data into specific columns while leaving others blank. Here's how you can insert only `name` and `city` for a new customer named Bob:
+
+```sql
+INSERT INTO Customers (name, city)
+VALUES ('Bob', 'London');
+```
+
+**Inserting Multiple Rows at Once**
+
+The `INSERT INTO` statement allows you to insert multiple rows of data in one go. Simply add additional sets of values within parentheses, separated by commas:
+
+```sql
+INSERT INTO Customers (name, email, city)
+VALUES ('Alice', 'alice@wonderland.com', 'New York'),
+       ('Bob', 'bob@example.com', 'London'),
+       ('Charlie', 'charlie@mail.com', 'Paris');
+```
+
+**Understanding Data Types**
+
+Remember, MySQL adheres to data types for each column. Make sure the values you insert correspond to the expected data type (e.g., numbers for integer columns, text for string columns).
+
+## Retrieving Data with `SELECT`
+
+Now that you've populated your tables with valuable data, it's time to retrieve it! The `SELECT` statement acts as your search engine within the database. You can use it to fetch specific data or entire sets of records from your tables.
+
+Here's the basic syntax of the `SELECT` statement:
+
+```sql
+SELECT column1, column2, ...
+FROM table_name;
+```
+
+Let's dissect it:
+
+- `SELECT`: This keyword initiates the data retrieval operation.
+- `column1, column2, ...`: This section specifies the columns you want to retrieve from the table. You can select all columns using `*` or choose specific ones.
+- `FROM`: This keyword indicates the table from which you want to retrieve data.
+- `table_name`: Replace this with the actual name of the table you want to select data from.
+
+**Example 1: Retrieving All Customer Data**
+
+To fetch all data from the `Customers` table, you can use the following statement:
+
+```sql
+SELECT *
+FROM Customers;
+```
+
+This will retrieve all columns (`*`) from every row (`Customers`) in the table, presenting you with a complete list of your customers.
+
+**Example 2: Retrieving Specific Columns**
+
+Perhaps you're only interested in a customer's name and email address. You can achieve this by selecting those specific columns:
+
+```sql
+SELECT name, email
+FROM Customers;
+```
+
+This will return a list of customers with just their names and email addresses.
+
+**Filtering Data with `WHERE` Clause**
+
+The `WHERE` clause empowers you to filter the retrieved data based on specific conditions. It allows you to target only relevant rows that meet your criteria.
+
+Here's the basic syntax incorporating the `WHERE` clause:
+
+```sql
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+```
+
+Let's explore how the `WHERE` clause adds muscle to your data retrieval:
+
+**Example 1: Finding a Specific Customer**
+
+Say you want to find a customer named Alice. You can utilize the `WHERE` clause to filter the results:
+
+```sql
+SELECT *
+FROM Customers
+WHERE name = 'Alice';
+```
+
+This statement will only retrieve the row where the `name` column matches 'Alice', providing you with her complete customer information.
+
+**Operators in the `WHERE` Clause**
+
+The `WHERE` clause employs various operators to define your filtering conditions. Here are some commonly used ones:
+
+- `=` (Equal to): This operator checks if a column's value is exactly equal to the specified value.
+- `<>` or `!=` (Not equal to): This operator checks if a column's value is not equal to the specified value.
+- `>` (Greater than): This operator checks if a column's value is greater than the specified value.
+- `<` (Less than): This operator checks if a column's value is less than the specified value.
+- `>=` (Greater than or equal to): This operator checks if a column's value is greater than or equal to the specified value.
+- `<=` (Less than or equal to): This operator checks if a column's value is less than or equal to the specified value.
+- `LIKE`: This operator allows for pattern matching in text-based columns. You can use wildcards like `%` to match any sequence of characters.
+
+**Example 2: Filtering by City**
+
+To find all customers residing in London, you can use the `LIKE` operator:
+
+```sql
+SELECT *
+FROM Customers
+WHERE city LIKE 'London';
+```
+
+This will retrieve all rows where the `city` column contains the string 'London', potentially including customers like 'New London' or 'East London'.
+
+**Combining Conditions with AND and OR**
+
+You can combine multiple conditions within the `WHERE` clause using the `AND` and `OR` operators to refine your search further.
+
+- `AND`: This operator requires both specified conditions to be true for a row to be retrieved.
+- `OR`: This operator retrieves rows where at least one of the specified conditions is true.
+
+**Example 3: Filtering by City and Email**
+
+To find customers from New York with email addresses ending in '@wonderland.com', you can combine conditions with `AND`:
+
+```sql
+SELECT *
+FROM Customers
+WHERE city = 'New York' AND email LIKE '%@wonderland.com';
+```
+
+This statement will only return rows where both the `city` is 'New York' and the `email` ends with '@wonderland.com'.
+
+**Sorting Retrieved Data with `ORDER BY`**
+
+The `ORDER BY` clause allows you to organize the retrieved data based on a specific column. You can sort in ascending or descending order.
+
+Here's the syntax for incorporating `ORDER BY`:
+
+```sql
+SELECT column1, column2, ...
+FROM table_name
+[WHERE condition]
+ORDER BY column_name ASC|DESC;
+```
+
+- `ASC` (Ascending): This keyword sorts the data in increasing order (e.g., A to Z, 1 to 10).
+- `DESC` (Descending): This keyword sorts the data in decreasing order (e.g., Z to A, 10 to 1).
+
+**Example 4: Sorting Customers by Name**
+
+To sort your customer list alphabetically by name in ascending order, you can use:
+
+```sql
+SELECT *
+FROM Customers
+ORDER BY name ASC;
+```
+
+**Limiting Retrieved Data with `LIMIT`**
+
+The `LIMIT` clause restricts the number of rows returned by the `SELECT` statement. This is helpful for retrieving only a specific number of results or fetching data in portions.
+
+Here's the syntax for incorporating `LIMIT`:
+
+```sql
+SELECT column1, column2, ...
+FROM table_name
+[WHERE condition]
+[ORDER BY column_name ASC|DESC]
+LIMIT number;
+```
+
+- `number`: This specifies the maximum number of rows you want to retrieve.
+
+**Example 5: Retrieving the First 5 Customers**
+
+To fetch only the first five customers from your list, you can use:
+
+```sql
+SELECT *
+FROM Customers
+LIMIT 5;
+```
+
+**Combining `LIMIT` with `OFFSET`**
+
+You can combine `LIMIT` with `OFFSET` to retrieve data in portions. `OFFSET` specifies the number of rows to skip before starting to retrieve results.
+
+Here's the syntax for using `OFFSET`:
+
+```sql
+SELECT column1, column2, ...
+FROM table_name
+[WHERE condition]
+[ORDER BY column_name ASC|DESC]
+LIMIT number OFFSET offset_value;
+```
+
+- `offset_value`: This specifies the number of rows to skip before retrieving the data limited by `LIMIT`.
+
+**Example 6: Retrieving Customers from Position 6 to 10**
+
+To retrieve customers from the 6th position (skipping the first 5) to the 10th position (limit of 5), you can use:
+
+```sql
+SELECT *
+FROM Customers
+LIMIT 5 OFFSET 5;
+```
+
+## Advanced SELECT Operations
+
+MySQL offers a variety of advanced functionalities within the `SELECT` statement, allowing you to perform more complex data manipulation. Here are a few examples:
+
+- **Aggregate Functions:** These functions summarize data across multiple rows. Examples include `COUNT` (number of rows), `SUM` (total of a column), `AVG` (average), `MIN` (smallest value), and `MAX` (largest value).
+- **Group BY:** This clause groups retrieved data based on a specific column, allowing you to perform aggregate functions on the grouped data.
+- **HAVING Clause:** This clause filters grouped data based on the results of aggregate functions.
+- **JOINs:** JOIN operations allow you to combine data from multiple tables based on a relationship between them.
+
+## Conclusion
+
+By mastering the `INSERT INTO`, `SELECT`, and `WHERE` clause, you've unlocked the fundamental tools for populating and retrieving data from your MySQL tables. Remember, practice is key! Experiment with different queries, explore the additional functionalities mentioned above, and delve deeper into MySQL's capabilities to become a data manipulation pro.

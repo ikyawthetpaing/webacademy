@@ -1,0 +1,244 @@
+---
+index: 8
+title: "MySQL Data Manipulation with DML"
+---
+
+Data manipulation is the lifeblood of any database system. MySQL provides a robust Data Manipulation Language (DML) that empowers you to interact with your data, allowing you to insert new records, modify existing ones, and remove unwanted information. This chapter delves into the core DML statements – `INSERT`, `UPDATE`, and `DELETE` – equipping you to manage your MySQL data effectively.
+
+## Understanding Data Manipulation Language (DML)
+
+DML statements are the workhorses of data interaction within MySQL. They enable you to perform the following operations:
+
+- **Inserting New Data:** Use the `INSERT` statement to populate your tables with fresh records.
+- **Updating Existing Data:** Leverage the `UPDATE` statement to modify specific data within existing records based on defined criteria.
+- **Deleting Data:** Utilize the `DELETE` statement to remove unwanted or obsolete records from your tables.
+
+DML statements work hand-in-hand with Data Definition Language (DDL) statements, which are used to create, alter, and drop database structures like tables and columns.
+
+## Inserting New Data with `INSERT`
+
+The `INSERT` statement is the cornerstone of adding new information to your MySQL tables. Here's the basic syntax:
+
+```sql
+INSERT INTO table_name (column1, column2, ...)
+VALUES (value1, value2, ...);
+```
+
+Let's break it down:
+
+- `INSERT`: This keyword initiates the data insertion operation.
+- `INTO`: This keyword specifies the target table where you want to insert the data.
+- `table_name`: Replace this with the actual name of the table you want to insert data into.
+- `(column1, column2, ...)`: This section lists the columns in the table where you want to insert values. You can specify individual columns or use `*` to insert values into all columns (assuming they allow NULL values).
+- `VALUES`: This keyword introduces the actual data values you want to insert.
+- `(value1, value2, ...)`: This section provides the corresponding values for each column listed earlier. Ensure the order of values matches the order of columns specified.
+
+**Example 1: Inserting a New Customer**
+
+Imagine a `Customers` table with columns for `name`, `email`, and `city`. To add a new customer named Alice with her email and city details, you can use:
+
+```sql
+INSERT INTO Customers (name, email, city)
+VALUES ('Alice', 'alice@wonderland.com', 'Los Angeles');
+```
+
+This query inserts a new record into the `Customers` table, populating the specified columns with the corresponding values.
+
+## Specifying Columns for Insertion (Optional)
+
+As mentioned earlier, you can choose to insert values into specific columns within a table. Here's an example:
+
+```sql
+INSERT INTO Customers (name, city)
+VALUES ('Bob', 'New York');
+```
+
+In this scenario, the `email` column will have a NULL value (assuming it allows NULL values) since it's not explicitly mentioned in the `INSERT` statement.
+
+## Inserting Multiple Records with Multiple INSERT Statements
+
+You can insert multiple records one by one using separate `INSERT` statements. However, this can be cumbersome for large datasets.
+
+**Example 2: Inserting Multiple Customers (Alternative Approach)**
+
+Here's a more efficient way to insert multiple records:
+
+```sql
+INSERT INTO Customers (name, email, city)
+VALUES ('Alice', 'alice@wonderland.com', 'Los Angeles'),
+       ('Bob', 'bob@example.com', 'New York'),
+       ('Charlie', 'charlie@mail.com', 'London');
+```
+
+This query inserts three new customer records in a single `INSERT` statement, improving efficiency for bulk insertions.
+
+## The `AUTO_INCREMENT` Keyword
+
+Many tables have an auto-incrementing column, typically an integer primary key, that automatically generates a unique value for each new record inserted. You don't need to specify a value for this column in your `INSERT` statement; MySQL assigns the next available value in the sequence.
+
+**Example 3: Inserting a New Order with Auto-Incrementing ID**
+
+Suppose an `Orders` table has an `order_id` column defined as an auto-incrementing primary key. To create a new order without specifying the `order_id`, you can use:
+
+```sql
+INSERT INTO Orders (customer_id, order_date, total_amount)
+VALUES (123, CURDATE(), 150.00);
+```
+
+Here, MySQL will automatically assign a unique value to the `order_id` column for the new order record.
+
+## Handling NULL Values and Default Values
+
+NULL values represent the absence of a specific data value within a column. MySQL tables can be defined to handle NULL values in two primary ways:
+
+1. **Allowing NULL Values:** By default, most data types in MySQL permit NULL values. This signifies that a column can have entries where no specific data is present.
+
+2. **Specifying Default Values:** You can define a default value for a column during table creation using the `DEFAULT` clause. This value will be automatically inserted if no value is explicitly specified during an `INSERT` operation.
+
+**Example 1: Checking for NULL Values**
+
+Here's how you can check for NULL values in a column:
+
+```sql
+SELECT * FROM Customers
+WHERE email IS NULL;
+```
+
+This query retrieves all records from the `Customers` table where the `email` column is NULL, indicating missing email information for those customers.
+
+**Example 2: Specifying a Default Value for a Column**
+
+Let's modify the `Customers` table to have a default value for the `city` column:
+
+```sql
+ALTER TABLE Customers
+MODIFY city VARCHAR(50) DEFAULT 'Unknown';
+```
+
+This statement modifies the `city` column in the `Customers` table:
+
+- `VARCHAR(50)` defines the data type and maximum length for city names.
+- `DEFAULT 'Unknown'` sets the default value to 'Unknown' if no city is provided during record insertion.
+
+Now, if you insert a new customer record without specifying the city:
+
+```sql
+INSERT INTO Customers (name, email)
+VALUES ('David', 'david@work.com');
+```
+
+The `city` column will automatically be populated with the default value ('Unknown') in this case.
+
+## Updating Existing Data with `UPDATE`
+
+The `UPDATE` statement empowers you to modify data within existing records in your tables. Here's the basic syntax:
+
+```sql
+UPDATE table_name
+SET column1 = new_value1, column2 = new_value2, ...
+WHERE condition;
+```
+
+Let's dissect it:
+
+- `UPDATE`: This keyword initiates the data update operation.
+- `table_name`: Replace this with the actual name of the table you want to update data in.
+- `SET`: This keyword introduces the changes you want to make.
+- `column1 = new_value1, column2 = new_value2, ...`: This section specifies the columns you want to update and their corresponding new values.
+- `WHERE`: This keyword (optional) introduces a condition that filters the rows to be updated. If omitted, all rows in the table will be affected (use with caution!).
+- `condition`: This specifies the criteria for selecting which rows to update (e.g., `column_name = specific_value`).
+
+**Example 3: Updating a Customer's Email Address**
+
+Let's say a customer named Alice changes her email address. To update her record in the `Customers` table, you can use:
+
+```sql
+UPDATE Customers
+SET email = 'alice.new@wonderland.com'
+WHERE name = 'Alice';
+```
+
+This query modifies the `email` column for the customer named Alice, ensuring only the intended record is updated.
+
+## Updating Multiple Columns and Filtering Rows
+
+The `UPDATE` statement allows you to update multiple columns within a single statement, and you can filter the rows to be updated using a `WHERE` clause:
+
+```sql
+UPDATE Customers
+SET email = 'bob.new@example.com', city = 'San Francisco'
+WHERE name = 'Bob';
+```
+
+This query updates both the `email` and `city` columns for the customer named Bob.
+
+## Deleting Data with `DELETE`
+
+The `DELETE` statement provides the power to remove unwanted or obsolete data from your tables. It allows you to target specific rows for deletion based on a defined criteria. Here's the basic syntax:
+
+```sql
+DELETE FROM table_name
+WHERE condition;
+```
+
+Let's analyze it:
+
+- `DELETE`: This keyword initiates the data deletion operation.
+- `FROM`: This keyword indicates the table from which you want to delete data.
+- `table_name`: Replace this with the actual name of the table.
+- `WHERE`: This keyword (optional) introduces a condition that filters the rows to be deleted. If omitted, all rows in the table will be deleted (use with caution!).
+- `condition`: This specifies the criteria for selecting which rows to delete (e.g., `column_name = specific_value`).
+
+**Example 4: Deleting an Inactive Customer**
+
+Imagine you have a flag in the `Customers` table to indicate customer activity. To remove an inactive customer named David, you can use:
+
+```sql
+DELETE FROM Customers
+WHERE name = 'David' AND active = 0;
+```
+
+This query ensures only the record for the inactive customer named David is deleted by using the `AND` operator in the `WHERE` clause.
+
+**Important Note:** Be extremely cautious while using `DELETE` without a `WHERE` clause, as it will permanently remove all rows from the specified table.
+
+## Transactions for Data Integrity (Optional but Recommended)
+
+When performing multiple data modifications (updates or deletes) within a single operation, ensuring data consistency becomes crucial. Transactions act as a safety net, guaranteeing that either all the modifications within a transaction succeed or none of them are applied.
+
+Here's a simplified explanation of transactions:
+
+1. **Start Transaction:** You initiate a transaction, signifying the beginning of a series of data modifications.
+2. **Execute Statements:** You perform your `UPDATE` or `DELETE` statements within the transaction.
+3. **Commit or Rollback:** You either commit the transaction, making all changes permanent, or rollback the transaction, discarding any modifications if any issue arises.
+
+**Example: Updating Order Status and Stock Level (with Transaction)**
+
+Let's say you have an `Orders` table and a `Products` table. When an order is placed, you need to update the order status in the `Orders` table and decrease the stock level of the purchased product in the `Products` table. This involves modifying data in two separate tables. To ensure consistency, you can utilize a transaction:
+
+```sql
+START TRANSACTION;
+
+-- Update order status in Orders table
+UPDATE Orders
+SET order_status = 'shipped'
+WHERE order_id = 123;
+
+-- Decrease stock level in Products table
+UPDATE Products
+SET stock_level = stock_level - quantity
+WHERE product_id = (SELECT product_id FROM Orders WHERE order_id = 123);
+
+COMMIT;
+```
+
+**Benefits of Transactions:**
+
+- **Atomicity:** Ensures all modifications within a transaction are treated as a single unit. Either all succeed or none happen, preventing partial updates and maintaining data integrity.
+- **Consistency:** Guarantees the database remains in a valid state after the transaction, adhering to the defined data rules.
+- **Isolation:** Isolates the transaction from concurrent operations, ensuring no interference from other users modifying the same data while the transaction is ongoing.
+- **Durability:** Once a transaction is committed, the changes are persisted to the database, ensuring they survive system crashes or failures.
+
+## Conclusion
+
+The `INSERT`, `UPDATE`, and `DELETE` statements empower you to manage your MySQL data effectively. By understanding NULL values, default values, and the importance of data integrity during updates and deletions, you can ensure the accuracy and consistency of your database. Remember to practice using these statements responsibly and strategically to maintain a healthy and reliable data environment.
